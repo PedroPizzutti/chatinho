@@ -17,33 +17,30 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        try {
-            this.sessions.add(session);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao conectar: " + e.getMessage());
-        }
+        this.sessions.add(session);
+        this.sendMessage(new TextMessage(session.getId() + " se conectou"));
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        try {
-            for (WebSocketSession s : sessions) {
-                if (s.isOpen()) {
-                    s.sendMessage(message);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
-        }
+        this.sendMessage(message);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        try {
-           this.sessions.remove(session);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao desconectar: " + e.getMessage());
-        }
+        this.sessions.remove(session);
+        this.sendMessage(new TextMessage(session.getId() + " se desconectou"));
     }
 
+    private void sendMessage(TextMessage message) {
+        for (WebSocketSession s : sessions) {
+            if (s.isOpen()) {
+                try {
+                    s.sendMessage(message);
+                } catch (Exception e) {
+                    throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
+                }
+            }
+        }
+    }
 }
