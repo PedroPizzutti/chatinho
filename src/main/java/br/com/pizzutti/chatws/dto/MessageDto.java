@@ -1,3 +1,3 @@
-package br.com.pizzutti.chat_ws.dto;
+package br.com.pizzutti.chatws.dto;
 
 public record MessageDto(String sender, String content) {}

@@ -1,9 +1,8 @@
-package br.com.pizzutti.chat_ws.websocket;
+package br.com.pizzutti.chatws.websocket;
 
-import br.com.pizzutti.chat_ws.dto.MessageDto;
+import br.com.pizzutti.chatws.dto.MessageDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.websocket.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

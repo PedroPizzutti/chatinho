@@ -1,4 +1,4 @@
-package br.com.pizzutti.chat_ws;
+package br.com.pizzutti.chatws;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

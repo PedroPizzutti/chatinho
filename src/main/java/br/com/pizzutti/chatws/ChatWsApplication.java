@@ -1,4 +1,4 @@
-package br.com.pizzutti.chat_ws;
+package br.com.pizzutti.chatws;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
