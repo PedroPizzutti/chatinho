@@ -1,5 +1,9 @@
 package br.com.pizzutti.chat_ws.websocket;
 
+import br.com.pizzutti.chat_ws.dto.MessageDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.websocket.Session;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -15,22 +19,23 @@ import java.util.Set;
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         this.sessions.add(session);
-        this.sendMessage(new TextMessage(session.getId() + " se conectou"));
+        this.sendMessage(this.prepareMessage(session, "se conectou"));
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        this.sendMessage(message);
+        this.sendMessage(this.prepareMessage(session, message.getPayload()));
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         this.sessions.remove(session);
-        this.sendMessage(new TextMessage(session.getId() + " se desconectou"));
+        this.sendMessage(this.prepareMessage(session, "se desconectou"));
     }
 
     private void sendMessage(TextMessage message) {
@@ -41,6 +46,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             } catch (IOException e) {
                 throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
             }
+        }
+    }
+
+    private TextMessage prepareMessage(WebSocketSession session, String message) {
+        try {
+            var payload = objectMapper.writeValueAsString(new MessageDto(session.getId(), message));
+            return new TextMessage(payload);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Erro ao converter preparar mensagem: " + e.getMessage());
         }
     }
 }
