@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class ChatHandler extends TextWebSocketHandler {
+public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
