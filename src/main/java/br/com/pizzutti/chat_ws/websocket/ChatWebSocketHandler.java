@@ -6,6 +6,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,13 +34,12 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     private void sendMessage(TextMessage message) {
-        for (WebSocketSession s : sessions) {
-            if (s.isOpen()) {
-                try {
-                    s.sendMessage(message);
-                } catch (Exception e) {
-                    throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
-                }
+        for (WebSocketSession session : sessions) {
+            if (!session.isOpen()) continue;
+            try {
+                session.sendMessage(message);
+            } catch (IOException e) {
+                throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
             }
         }
     }
