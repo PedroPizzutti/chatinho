@@ -1,6 +1,8 @@
 package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.CreateUserDto;
+import br.com.pizzutti.chatws.model.User;
+import br.com.pizzutti.chatws.service.UserService;
 import br.com.pizzutti.chatws.service.UserTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,18 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/auth")
 public class AuthController {
 
+    private final UserService userService;
     private final UserTokenService userTokenService;
 
-    public AuthController(UserTokenService userTokenService) {
+    public AuthController(UserService userService, UserTokenService userTokenService) {
+        this.userService = userService;
         this.userTokenService = userTokenService;
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@RequestBody CreateUserDto createUserDto) {
-        var token = userTokenService.findByToken(createUserDto.token());
-        userTokenService.validateToken(token);
-        userTokenService.burnToken(token);
-        return ResponseEntity.status(201).body(null);
+    public ResponseEntity<User> createUser(@RequestBody CreateUserDto createUserDto) {
+        this.userTokenService.useToken(createUserDto);
+        var user = this.userService.create(createUserDto);
+        return ResponseEntity.status(201).body(user);
     }
 
 }
