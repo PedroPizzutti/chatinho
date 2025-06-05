@@ -21,6 +21,8 @@ public class AuthController {
     @PostMapping("/create-user")
     public ResponseEntity<?> createUser(@RequestBody CreateUserDto createUserDto) {
         var token = userTokenService.findByToken(createUserDto.token());
+        userTokenService.validateToken(token);
+        userTokenService.burnToken(token);
         return ResponseEntity.status(201).body(null);
     }
 

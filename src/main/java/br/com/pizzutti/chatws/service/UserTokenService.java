@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UserTokenService {
 
@@ -14,6 +16,24 @@ public class UserTokenService {
     public UserTokenService(UserTokenRepository userTokenRepository) {
         this.userTokenRepository = userTokenRepository;
     }
+
+    private void validateTokenIsUsed(UserToken userToken) {
+        if (userToken.getUsed()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token já utilizado!");
+        }
+    }
+
+    private void validateTokenIsExpired(UserToken userToken) {
+        if (LocalDateTime.now().isAfter((userToken.getCreatedAt().plusHours(userToken.getExpiresIn())))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token expirado!");
+        }
+    }
+
+    public void validateToken(UserToken userToken) {
+        this.validateTokenIsUsed(userToken);
+        this.validateTokenIsExpired(userToken);
+    }
+
 
     public void burnToken(UserToken userToken) {
         userToken.setUsed(true);

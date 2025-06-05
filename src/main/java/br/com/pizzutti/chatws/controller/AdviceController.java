@@ -2,6 +2,7 @@ package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.AdviceDto;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -22,6 +23,18 @@ public class AdviceController {
                 .build();
 
         return ResponseEntity.status(ex.getStatusCode()).body(adviceDto);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<AdviceDto> handleGenericEx(Exception ex, HttpServletRequest request) {
+        var adviceDto = AdviceDto.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(adviceDto);
     }
 
 }
