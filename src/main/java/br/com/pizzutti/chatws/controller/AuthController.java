@@ -2,8 +2,6 @@ package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.CreateUserDto;
 import br.com.pizzutti.chatws.model.User;
-import br.com.pizzutti.chatws.service.UserService;
-import br.com.pizzutti.chatws.service.TotemService;
 import br.com.pizzutti.chatws.service.UserServiceFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("v1/auth")
 public class AuthController {
-    
+
     private final UserServiceFacade userServiceFacade;
 
     public AuthController(UserServiceFacade userServiceFacade) {
