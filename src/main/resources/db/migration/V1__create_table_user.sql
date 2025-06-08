@@ -1,14 +1,14 @@
-CREATE TABLE user_token (
-    ID BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    CREATED_AT DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    EXPIRES_IN INT DEFAULT 72,
-    TOKEN CHAR(36),
-    USED BOOLEAN NOT NULL DEFAULT FALSE
+create table totem (
+    id bigint(20) not null auto_increment primary key,
+    created_at datetime not null default current_timestamp,
+    expires_in int default 72,
+    guid char(36),
+    used boolean not null default false
 );
 
-CREATE TABLE user_ws (
-    ID BIGINT(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    CREATED_AT DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    LOGIN VARCHAR(60) NOT NULL UNIQUE,
-    PASSWORD VARCHAR(100) NOT NULL
+create table user (
+    id bigint(20) not null auto_increment primary key,
+    created_at datetime not null default current_timestamp,
+    login varchar(60) not null unique,
+    password varchar(100) not null
 );

@@ -9,26 +9,26 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_token")
+@Table(name = "totem")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserToken {
+public class Totem {
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "EXPIRES_IN")
+    @Column(name = "expires_in")
     private Integer expiresIn;
 
-    @Column(name = "TOKEN")
-    private String token;
+    @Column(name = "guid")
+    private String guid;
 
-    @Column(name = "USED")
+    @Column(name = "is_used")
     private Boolean used;
 }
