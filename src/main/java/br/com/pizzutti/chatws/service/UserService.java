@@ -16,10 +16,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User create(CreateUserDto createUserDto) {
+    public User create(String login, String password) {
         var user = User.builder()
-                .login(createUserDto.login())
-                .password(createUserDto.password())
+                .login(login)
+                .password(password)
                 .createdAt(LocalDateTime.now())
                 .build();
 

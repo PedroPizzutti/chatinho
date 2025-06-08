@@ -3,7 +3,7 @@ create table totem (
     created_at datetime not null default current_timestamp,
     expires_in int default 72,
     guid char(36),
-    used boolean not null default false
+    is_used boolean not null default false
 );
 
 create table user (
