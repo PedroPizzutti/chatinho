@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.service;
 
-import br.com.pizzutti.chatws.dto.CreateUserDto;
+import br.com.pizzutti.chatws.dto.UserCreateDto;
+import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,13 @@ public class UserServiceFacade {
         this.totemService = totemService;
     }
 
-    public User createdUser(CreateUserDto createUserDto) {
-        this.totemService.burn(createUserDto.totem());
-        return this.userService.create(createUserDto.login(), createUserDto.password());
+    public User createdUser(UserCreateDto userCreateDto) {
+        this.totemService.burn(userCreateDto.totem());
+        return this.userService.create(userCreateDto.login(), userCreateDto.password());
+    }
+
+    public User login(UserLoginDto userLoginDto) {
+        return this.userService.login(userLoginDto);
     }
 
 }

@@ -1,11 +1,12 @@
 package br.com.pizzutti.chatws.service;
 
-import br.com.pizzutti.chatws.dto.CreateUserDto;
+import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.repository.UserRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -30,5 +31,15 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
+    public User login(UserLoginDto userLoginDto) {
+        var user = this.userRepository
+                .findByLogin(userLoginDto.login())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login/senha inválido!"));
 
+        if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login/senha inválido!");
+        }
+
+        return user;
+    }
 }
