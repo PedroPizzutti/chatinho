@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.controller;
 
+import br.com.pizzutti.chatws.dto.TokenDto;
 import br.com.pizzutti.chatws.dto.UserCreateDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
@@ -20,16 +21,15 @@ public class AuthController {
         this.userServiceFacade = userServiceFacade;
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<TokenDto> login(@RequestBody UserLoginDto userLoginDto) {
+        var token = this.userServiceFacade.login(userLoginDto);
+        return ResponseEntity.status(201).body(token);
+    }
+
     @PostMapping("/create-user")
     public ResponseEntity<User> createUser(@RequestBody UserCreateDto userCreateDto) {
         var user = this.userServiceFacade.createdUser(userCreateDto);
         return ResponseEntity.status(201).body(user);
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody UserLoginDto userLoginDto) {
-        var user = this.userServiceFacade.login(userLoginDto);
-        return ResponseEntity.status(201).body(user);
-    }
-
 }

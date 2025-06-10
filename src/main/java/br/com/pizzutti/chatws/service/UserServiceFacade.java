@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.service;
 
+import br.com.pizzutti.chatws.dto.TokenDto;
 import br.com.pizzutti.chatws.dto.UserCreateDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
@@ -10,10 +11,12 @@ public class UserServiceFacade {
 
     private final UserService userService;
     private final TotemService totemService;
+    private final TokenService tokenService;
 
-    public UserServiceFacade(UserService userService, TotemService totemService) {
+    public UserServiceFacade(UserService userService, TotemService totemService, TokenService tokenService) {
         this.userService  = userService;
         this.totemService = totemService;
+        this.tokenService = tokenService;
     }
 
     public User createdUser(UserCreateDto userCreateDto) {
@@ -21,8 +24,9 @@ public class UserServiceFacade {
         return this.userService.create(userCreateDto.login(), userCreateDto.password());
     }
 
-    public User login(UserLoginDto userLoginDto) {
-        return this.userService.login(userLoginDto);
+    public TokenDto login(UserLoginDto userLoginDto) {
+        var user = this.userService.login(userLoginDto);
+        return this.tokenService.generateToken(user);
     }
 
 }
