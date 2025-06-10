@@ -4,6 +4,8 @@ import br.com.pizzutti.chatws.dto.TokenDto;
 import br.com.pizzutti.chatws.model.User;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +48,21 @@ public class TokenService {
         } catch (JoseException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
         }
+    }
 
+    public void validateToken(String token) {
+        try {
+            var jwtConsumer = new JwtConsumerBuilder()
+                    .setRequireExpirationTime()
+                    .setAllowedClockSkewInSeconds(30)
+                    .setRequireSubject()
+                    .setVerificationKey(this.getKey())
+                    .build();
+
+            jwtConsumer.processToClaims(token);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getLocalizedMessage());
+        }
     }
 
 }

@@ -26,7 +26,7 @@
     const sendBtn = document.getElementById('sendBtn');
 
     // Ajuste o endereço conforme onde seu backend está rodando
-    const socket = new WebSocket('ws://localhost:14500/v1/ws/chat?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30');
+    const socket = new WebSocket('ws://localhost:14500/v1/ws/chat?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXp6dXR0aSIsIm5pY2siOiJQZWRybyBQaXp6dXR0aSIsImlhdCI6MTc0OTUxNjU4OSwiZXhwIjoxNzQ5NTE2ODg5fQ.ThxYOql4U_Dc8DnaDbWABKVbd82owoI-DsxVIO8_6Oc');
 
     socket.onopen = () => {
         appendMessage('Conectado ao servidor WebSocket.');
