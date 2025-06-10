@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.service;
 
+import br.com.pizzutti.chatws.dto.UserCreateDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.repository.UserRepository;
@@ -21,10 +22,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User create(String login, String password) {
+    public User create(UserCreateDto userCreateDto) {
         var user = User.builder()
-                .login(login)
-                .password(passwordEncoder.encode(password))
+                .login(userCreateDto.login())
+                .nickname(userCreateDto.nickname())
+                .password(passwordEncoder.encode(userCreateDto.password()))
                 .createdAt(LocalDateTime.now())
                 .build();
 

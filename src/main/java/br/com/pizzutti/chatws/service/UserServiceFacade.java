@@ -21,7 +21,7 @@ public class UserServiceFacade {
 
     public User createdUser(UserCreateDto userCreateDto) {
         this.totemService.burn(userCreateDto.totem());
-        return this.userService.create(userCreateDto.login(), userCreateDto.password());
+        return this.userService.create(userCreateDto);
     }
 
     public TokenDto login(UserLoginDto userLoginDto) {

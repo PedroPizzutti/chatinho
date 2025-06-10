@@ -31,6 +31,7 @@ public class TokenService {
         try {
             var jwtClaims = new JwtClaims();
             jwtClaims.setSubject(user.getLogin());
+            jwtClaims.setClaim("nick", user.getNickname());
             jwtClaims.setIssuedAtToNow();
             jwtClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
 
