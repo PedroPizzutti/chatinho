@@ -1,6 +1,5 @@
 package br.com.pizzutti.chatws.config;
 
-import br.com.pizzutti.chatws.security.JwtHandshakeInterceptor;
 import br.com.pizzutti.chatws.websocket.ChatWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -11,16 +10,19 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class ChatWebSocketConfig implements WebSocketConfigurer {
 
-    private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+    private final ChatWebSocketHandler chatWebSocketHandler;
+    private final JwtHandshakeInterceptorConfig jwtHandshakeInterceptorConfig;
 
-    public ChatWebSocketConfig(JwtHandshakeInterceptor jwtHandshakeInterceptor) {
-        this.jwtHandshakeInterceptor = jwtHandshakeInterceptor;
+    public ChatWebSocketConfig(ChatWebSocketHandler chatWebSocketHandler,
+                               JwtHandshakeInterceptorConfig jwtHandshakeInterceptorConfig) {
+        this.chatWebSocketHandler = chatWebSocketHandler;
+        this.jwtHandshakeInterceptorConfig = jwtHandshakeInterceptorConfig;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new ChatWebSocketHandler(), "v1/ws/chat")
-                .addInterceptors(jwtHandshakeInterceptor)
+        registry.addHandler(this.chatWebSocketHandler, "v1/ws/chat")
+                .addInterceptors(this.jwtHandshakeInterceptorConfig)
                 .setAllowedOrigins("*");
     }
 }

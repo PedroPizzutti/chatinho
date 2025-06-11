@@ -24,9 +24,10 @@
     const chat = document.getElementById('chat');
     const messageInput = document.getElementById('message');
     const sendBtn = document.getElementById('sendBtn');
+    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXp6dXR0aSIsImlhdCI6MTc0OTY4NDkzOSwiZXhwIjoxNzQ5Njg1MjM5fQ.2VW30WMIRyEec6_E2uTMT3dRyDHsji30wtP4fFjWRDY';
 
     // Ajuste o endereço conforme onde seu backend está rodando
-    const socket = new WebSocket('ws://localhost:14500/v1/ws/chat?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwaXp6dXR0aSIsIm5pY2siOiJQZWRybyBQaXp6dXR0aSIsImlhdCI6MTc0OTUxNjU4OSwiZXhwIjoxNzQ5NTE2ODg5fQ.ThxYOql4U_Dc8DnaDbWABKVbd82owoI-DsxVIO8_6Oc');
+    const socket = new WebSocket(`ws://localhost:14500/v1/ws/chat?token=${token}`);
 
     socket.onopen = () => {
         appendMessage('Conectado ao servidor WebSocket.');

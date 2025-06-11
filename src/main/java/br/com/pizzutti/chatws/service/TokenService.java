@@ -33,7 +33,6 @@ public class TokenService {
         try {
             var jwtClaims = new JwtClaims();
             jwtClaims.setSubject(user.getLogin());
-            jwtClaims.setClaim("nick", user.getNickname());
             jwtClaims.setIssuedAtToNow();
             jwtClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
 
@@ -50,7 +49,7 @@ public class TokenService {
         }
     }
 
-    public void validateToken(String token) {
+    public String validateToken(String token) {
         try {
             var jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
@@ -59,10 +58,10 @@ public class TokenService {
                     .setVerificationKey(this.getKey())
                     .build();
 
-            jwtConsumer.processToClaims(token);
+            var jwtClaims = jwtConsumer.processToClaims(token);
+            return jwtClaims.getSubject();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getLocalizedMessage());
         }
     }
-
 }

@@ -1,7 +1,7 @@
-package br.com.pizzutti.chatws.security;
+package br.com.pizzutti.chatws.config;
 
 import br.com.pizzutti.chatws.service.TokenService;
-import jakarta.servlet.http.HttpServletRequest;
+import br.com.pizzutti.chatws.service.UserServiceFacade;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -12,12 +12,12 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.Map;
 
 @Component
-public class JwtHandshakeInterceptor implements HandshakeInterceptor {
+public class JwtHandshakeInterceptorConfig implements HandshakeInterceptor {
 
-    private final TokenService tokenService;
+    private final UserServiceFacade userServiceFacade;
 
-    public JwtHandshakeInterceptor(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public JwtHandshakeInterceptorConfig(UserServiceFacade userServiceFacade) {
+        this.userServiceFacade = userServiceFacade;
     }
 
     @Override
@@ -27,8 +27,9 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
         var httpServletRequest = servletRequest.getServletRequest();
-        this.tokenService.validateToken(httpServletRequest.getParameter("token"));
-        attributes.put("teste", "teste");
+        var user = this.userServiceFacade.login(httpServletRequest.getParameter("token"));
+        attributes.put("user", user.getLogin());
+        attributes.put("nick", user.getNickname());
         return true;
     }
 

@@ -10,6 +10,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,13 +18,18 @@ import java.util.Set;
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
+    private final ObjectMapper mapper;
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public ChatWebSocketHandler(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         this.sessions.add(session);
         this.sendMessage(this.prepareMessage(session, "se conectou"));
+
     }
 
     @Override
@@ -50,10 +56,22 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private TextMessage prepareMessage(WebSocketSession session, String message) {
         try {
-            var payload = objectMapper.writeValueAsString(new MessageDto(session.getId(), message));
-            return new TextMessage(payload);
+            var msgDto = MessageDto.builder()
+                    .sender(this.getNickFromSession(session))
+                    .content(message)
+                    .timeStamp(LocalDateTime.now())
+                    .build();
+            return new TextMessage(mapper.writeValueAsString(msgDto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Erro ao converter preparar mensagem: " + e.getMessage());
         }
+    }
+
+    private String getUserFromSession(WebSocketSession session) {
+        return (String) session.getAttributes().get("user");
+    }
+
+    private String getNickFromSession(WebSocketSession session) {
+        return (String) session.getAttributes().get("nick");
     }
 }

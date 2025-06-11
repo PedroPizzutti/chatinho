@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody UserLoginDto userLoginDto) {
-        var token = this.userServiceFacade.login(userLoginDto);
+        var token = this.userServiceFacade.generateToken(userLoginDto);
         return ResponseEntity.status(201).body(token);
     }
 

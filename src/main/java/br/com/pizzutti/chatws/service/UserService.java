@@ -33,6 +33,12 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
+    public User findByLogin(String login) {
+        return this.userRepository
+                .findByLogin(login)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login não encontrado!"));
+    }
+
     public User login(UserLoginDto userLoginDto) {
         var user = this.userRepository
                 .findByLogin(userLoginDto.login())

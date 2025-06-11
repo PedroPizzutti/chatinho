@@ -19,12 +19,17 @@ public class UserServiceFacade {
         this.tokenService = tokenService;
     }
 
+    public User login(String token) {
+        var login = this.tokenService.validateToken(token);
+        return this.userService.findByLogin(login);
+    }
+
     public User createdUser(UserCreateDto userCreateDto) {
         this.totemService.burn(userCreateDto.totem());
         return this.userService.create(userCreateDto);
     }
 
-    public TokenDto login(UserLoginDto userLoginDto) {
+    public TokenDto generateToken(UserLoginDto userLoginDto) {
         var user = this.userService.login(userLoginDto);
         return this.tokenService.generateToken(user);
     }
