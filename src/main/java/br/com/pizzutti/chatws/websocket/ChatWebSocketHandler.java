@@ -3,6 +3,7 @@ package br.com.pizzutti.chatws.websocket;
 import br.com.pizzutti.chatws.dto.MessageDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -19,52 +20,59 @@ import java.util.Set;
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper mapper;
+    private final RabbitTemplate rabbitTemplate;
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
-    public ChatWebSocketHandler(ObjectMapper mapper) {
+    public ChatWebSocketHandler(ObjectMapper mapper, RabbitTemplate rabbitTemplate) {
         this.mapper = mapper;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         this.sessions.add(session);
-        this.sendMessage(this.prepareMessage(session, "se conectou"));
+        this.sendMessage(this.prepareMessageDto(session, "se conectou"));
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        this.sendMessage(this.prepareMessage(session, message.getPayload()));
+        this.sendMessage(this.prepareMessageDto(session, message.getPayload()));
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         this.sessions.remove(session);
-        this.sendMessage(this.prepareMessage(session, "se desconectou"));
+        this.sendMessage(this.prepareMessageDto(session, "se desconectou"));
     }
 
-    private void sendMessage(TextMessage message) {
+    private void sendMessage(MessageDto messageDto) {
+        this.rabbitTemplate.convertAndSend(messageDto);
+        var textMessage = this.prepareTextMessage(messageDto);
         for (WebSocketSession session : sessions) {
             if (!session.isOpen()) continue;
             try {
-                session.sendMessage(message);
+                session.sendMessage(textMessage);
             } catch (IOException e) {
                 throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
             }
         }
     }
 
-    private TextMessage prepareMessage(WebSocketSession session, String message) {
+    private TextMessage prepareTextMessage(MessageDto messageDto) {
         try {
-            var msgDto = MessageDto.builder()
-                    .user(this.getUserFromSession(session))
-                    .nick(this.getNickFromSession(session))
-                    .message(message)
-                    .timeStamp(LocalDateTime.now())
-                    .build();
-            return new TextMessage(mapper.writeValueAsString(msgDto));
+            return new TextMessage(mapper.writeValueAsString(messageDto));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao converter preparar mensagem: " + e.getMessage());
+            throw new RuntimeException(e);
         }
+    }
+
+    private MessageDto prepareMessageDto(WebSocketSession session, String message) {
+        return MessageDto.builder()
+                .user(this.getUserFromSession(session))
+                .nick(this.getNickFromSession(session))
+                .message(message)
+                .timeStamp(LocalDateTime.now())
+                .build();
     }
 
     private String getUserFromSession(WebSocketSession session) {

@@ -30,16 +30,17 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue createQueueMessagesWs() {
+        return QueueBuilder.durable("ws.messages").build();
+    }
+
+    @Bean
     public RabbitTemplate createRabbitTemplate(ConnectionFactory connectionFactory,
                                                Jackson2JsonMessageConverter messageConverter) {
         var rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
+        rabbitTemplate.setExchange("");
+        rabbitTemplate.setRoutingKey("ws.messages");
         return rabbitTemplate;
     }
-
-    @Bean
-    public Queue createQueueMessagesWs() {
-        return QueueBuilder.nonDurable("ws.messages").build();
-    }
-
 }
