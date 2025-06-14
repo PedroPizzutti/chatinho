@@ -29,7 +29,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         this.sessions.add(session);
         this.sendMessage(this.prepareMessage(session, "se conectou"));
-
     }
 
     @Override
@@ -57,8 +56,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private TextMessage prepareMessage(WebSocketSession session, String message) {
         try {
             var msgDto = MessageDto.builder()
-                    .sender(this.getNickFromSession(session))
-                    .content(message)
+                    .user(this.getUserFromSession(session))
+                    .nick(this.getNickFromSession(session))
+                    .message(message)
                     .timeStamp(LocalDateTime.now())
                     .build();
             return new TextMessage(mapper.writeValueAsString(msgDto));
