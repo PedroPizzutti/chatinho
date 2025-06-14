@@ -1,7 +1,6 @@
 package br.com.pizzutti.chatws.config;
 
-import br.com.pizzutti.chatws.service.TokenService;
-import br.com.pizzutti.chatws.service.UserServiceFacade;
+import br.com.pizzutti.chatws.facade.UserFacade;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -14,10 +13,10 @@ import java.util.Map;
 @Component
 public class JwtHandshakeInterceptorConfig implements HandshakeInterceptor {
 
-    private final UserServiceFacade userServiceFacade;
+    private final UserFacade userServiceFacade;
 
-    public JwtHandshakeInterceptorConfig(UserServiceFacade userServiceFacade) {
-        this.userServiceFacade = userServiceFacade;
+    public JwtHandshakeInterceptorConfig(UserFacade userFacade) {
+        this.userServiceFacade = userFacade;
     }
 
     @Override
