@@ -16,7 +16,7 @@ public class RabbitMQListenerComponent {
 
     @RabbitListener(queues = "ws.messages")
     public void readMessage(MessageDto messageDto) {
-        this.messageService.created(messageDto);
+        this.messageService.create(messageDto);
     }
 
 }

@@ -16,7 +16,7 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Message created(MessageDto messageDto) {
+    public Message create(MessageDto messageDto) {
         var message = Message.builder()
                 .createdAt(messageDto.createdAt())
                 .content(messageDto.content())
@@ -25,7 +25,7 @@ public class MessageService {
         return this.messageRepository.save(message);
     }
 
-    public Page<Message> findLatestMessages(Pageable pageable) {
-        return this.messageRepository.findAllByOrderByCreatedAtDesc(pageable);
+    public Page<Message> findAll(Pageable pageable) {
+        return this.messageRepository.findAll(pageable);
     }
 }
