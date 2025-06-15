@@ -75,8 +75,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 .build();
     }
 
-    private Long getUserFromSession(WebSocketSession session) {
-        return (Long) session.getAttributes().get("user");
+    private String getUserFromSession(WebSocketSession session) {
+        return (String) session.getAttributes().get("user");
     }
 
     private String getNickFromSession(WebSocketSession session) {

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MessageDto(
-        Long user,
+        String user,
         String nick,
         String content,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

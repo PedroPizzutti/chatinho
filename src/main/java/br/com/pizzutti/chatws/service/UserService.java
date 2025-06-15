@@ -36,7 +36,13 @@ public class UserService {
     public User findByLogin(String login) {
         return this.userRepository
                 .findByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login não encontrado!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "login não encontrado!"));
+    }
+
+    public User findById(Long id) {
+        return this.userRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuário não encontrado!"));
     }
 
     public User login(UserLoginDto userLoginDto) {

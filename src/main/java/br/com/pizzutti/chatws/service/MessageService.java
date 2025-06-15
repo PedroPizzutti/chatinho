@@ -16,13 +16,8 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Message create(MessageDto messageDto) {
-        var message = Message.builder()
-                .createdAt(messageDto.createdAt())
-                .content(messageDto.content())
-                .userId(messageDto.user())
-                .build();
-        return this.messageRepository.save(message);
+    public Message create(Message message) {
+        return this.messageRepository.saveAndFlush(message);
     }
 
     public Page<Message> findAll(Pageable pageable) {
