@@ -23,6 +23,6 @@ public class Message {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "used_id")
+    @Column(name = "user_id")
     private Long userId;
 }

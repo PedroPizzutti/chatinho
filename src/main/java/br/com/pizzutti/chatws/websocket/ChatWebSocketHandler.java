@@ -71,7 +71,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 .user(this.getUserFromSession(session))
                 .nick(this.getNickFromSession(session))
                 .content(message)
-                .createAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 
