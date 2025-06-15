@@ -70,13 +70,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         return MessageDto.builder()
                 .user(this.getUserFromSession(session))
                 .nick(this.getNickFromSession(session))
-                .message(message)
-                .timeStamp(LocalDateTime.now())
+                .content(message)
+                .createAt(LocalDateTime.now())
                 .build();
     }
 
-    private String getUserFromSession(WebSocketSession session) {
-        return (String) session.getAttributes().get("user");
+    private Long getUserFromSession(WebSocketSession session) {
+        return (Long) session.getAttributes().get("user");
     }
 
     private String getNickFromSession(WebSocketSession session) {

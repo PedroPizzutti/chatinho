@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MessageDto(
-        String user,
+        Long user,
         String nick,
-        String message,
+        String content,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        LocalDateTime timeStamp
+        LocalDateTime createdAt
 ) {}

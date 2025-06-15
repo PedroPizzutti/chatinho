@@ -27,7 +27,7 @@ public class JwtHandshakeInterceptorConfig implements HandshakeInterceptor {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
         var httpServletRequest = servletRequest.getServletRequest();
         var user = this.userServiceFacade.login(httpServletRequest.getParameter("token"));
-        attributes.put("user", user.getLogin());
+        attributes.put("user", user.getId());
         attributes.put("nick", user.getNickname());
         return true;
     }
