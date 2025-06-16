@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.MessageDto;
+import br.com.pizzutti.chatws.facade.MessageFacade;
 import br.com.pizzutti.chatws.model.Message;
 import br.com.pizzutti.chatws.service.MessageService;
 import org.springframework.data.domain.Page;
@@ -16,18 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/message")
 public class MessageController {
 
-    private final MessageService messageService;
+    private final MessageFacade messageFacade;
 
-    public MessageController(MessageService messageService) {
-        this.messageService = messageService;
+    public MessageController(MessageFacade messageFacade) {
+        this.messageFacade = messageFacade;
     }
 
     @GetMapping("latest")
-    public ResponseEntity<Page<Message>> listLatest(
+    public ResponseEntity<Page<MessageDto>> listLatest(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable
     ) {
-        return ResponseEntity.ok(this.messageService.findAll(pageable));
+        return ResponseEntity.ok(this.messageFacade.findLatest(pageable));
     }
 
 }
