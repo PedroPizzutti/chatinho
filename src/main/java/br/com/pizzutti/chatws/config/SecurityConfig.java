@@ -11,6 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +23,14 @@ public class SecurityConfig {
                                                    JwtAuthFilterComponent jwtAuthFilterComponent) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfig = new CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of("*"));
+                    corsConfig.setAllowedMethods(List.of("*"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(false);
+                    return corsConfig;
+                }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("v1/auth/**", "v1/ws/**").permitAll()
                         .anyRequest().authenticated()
