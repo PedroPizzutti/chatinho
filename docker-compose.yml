@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    container_name: chat-ws
+    ports:
+      - "14500:14500"
