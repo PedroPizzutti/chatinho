@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.websocket;
 
 import br.com.pizzutti.chatws.dto.MessageDto;
+import br.com.pizzutti.chatws.service.TimeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -11,7 +12,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,11 +20,15 @@ import java.util.Set;
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper mapper;
+    private final TimeService timeService;
     private final RabbitTemplate rabbitTemplate;
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
-    public ChatWebSocketHandler(ObjectMapper mapper, RabbitTemplate rabbitTemplate) {
+    public ChatWebSocketHandler(ObjectMapper mapper,
+                                TimeService timeService,
+                                RabbitTemplate rabbitTemplate) {
         this.mapper = mapper;
+        this.timeService = timeService;
         this.rabbitTemplate = rabbitTemplate;
     }
 
@@ -71,7 +75,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 .user(this.getUserFromSession(session))
                 .nick(this.getNickFromSession(session))
                 .content(message)
-                .createdAt(LocalDateTime.now())
+                .createdAt(this.timeService.now())
                 .build();
     }
 
