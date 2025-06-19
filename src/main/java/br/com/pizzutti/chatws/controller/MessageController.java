@@ -24,11 +24,8 @@ public class MessageController {
     }
 
     @GetMapping("latest")
-    public ResponseEntity<Page<MessageDto>> listLatest(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC)
-            Pageable pageable
-    ) {
-        return ResponseEntity.ok(this.messageFacade.findLatest(pageable));
+    public ResponseEntity<Page<MessageDto>> listLatest() {
+        return ResponseEntity.ok(this.messageFacade.findLatest());
     }
 
 }
