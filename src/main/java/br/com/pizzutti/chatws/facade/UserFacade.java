@@ -2,6 +2,7 @@ package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.dto.TokenDto;
 import br.com.pizzutti.chatws.dto.UserCreateDto;
+import br.com.pizzutti.chatws.dto.UserCreatedDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.service.TokenService;
@@ -27,7 +28,7 @@ public class UserFacade {
         return this.userService.findByLogin(login);
     }
 
-    public User createdUser(UserCreateDto userCreateDto) {
+    public UserCreatedDto createUser(UserCreateDto userCreateDto) {
         this.totemService.burn(userCreateDto.totem());
         return this.userService.create(userCreateDto);
     }

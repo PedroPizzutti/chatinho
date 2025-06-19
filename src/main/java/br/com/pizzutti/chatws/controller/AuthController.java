@@ -29,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/create-user")
     public ResponseEntity<User> createUser(@RequestBody UserCreateDto userCreateDto) {
-        var user = this.userFacade.createdUser(userCreateDto);
+        var user = this.userFacade.createUser(userCreateDto);
         return ResponseEntity.status(201).body(user);
     }
 }
