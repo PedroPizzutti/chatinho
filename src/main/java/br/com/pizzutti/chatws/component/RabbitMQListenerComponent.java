@@ -2,7 +2,6 @@ package br.com.pizzutti.chatws.component;
 
 import br.com.pizzutti.chatws.dto.MessageDto;
 import br.com.pizzutti.chatws.facade.MessageFacade;
-import br.com.pizzutti.chatws.service.MessageService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
