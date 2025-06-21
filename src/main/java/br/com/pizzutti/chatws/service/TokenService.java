@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.dto.TokenDto;
+import br.com.pizzutti.chatws.dto.UserCreatedDto;
 import br.com.pizzutti.chatws.model.User;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -28,10 +29,10 @@ public class TokenService {
         return new HmacKey(secretBytes);
     }
 
-    public TokenDto generateToken(User user) {
+    public TokenDto generateToken(UserCreatedDto user) {
         try {
             var jwtClaims = new JwtClaims();
-            jwtClaims.setSubject(user.getLogin());
+            jwtClaims.setSubject(user.login());
             jwtClaims.setIssuedAtToNow();
             jwtClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
 

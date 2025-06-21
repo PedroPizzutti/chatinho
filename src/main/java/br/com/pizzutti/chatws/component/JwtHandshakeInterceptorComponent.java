@@ -26,7 +26,7 @@ public class JwtHandshakeInterceptorComponent implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
         var httpServletRequest = servletRequest.getServletRequest();
-        var user = this.userServiceFacade.login(httpServletRequest.getParameter("token"));
+        var user = this.userServiceFacade.loginWebSocket(httpServletRequest.getParameter("token"));
         attributes.put("user", user.getLogin());
         attributes.put("nick", user.getNickname());
         return true;

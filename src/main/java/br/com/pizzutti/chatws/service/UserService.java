@@ -2,6 +2,7 @@ package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.dto.UserCreateDto;
 import br.com.pizzutti.chatws.dto.UserCreatedDto;
+import br.com.pizzutti.chatws.dto.UserLoggedDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.repository.UserRepository;
@@ -43,7 +44,7 @@ public class UserService {
     public User findByLogin(String login) {
         return this.userRepository
                 .findByLogin(login)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "login não encontrado!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuário não encontrado!"));
     }
 
     public User findById(Long id) {
@@ -52,15 +53,19 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuário não encontrado!"));
     }
 
-    public User login(UserLoginDto userLoginDto) {
+    public UserCreatedDto login(UserLoginDto userLoginDto) {
         var user = this.userRepository
                 .findByLogin(userLoginDto.login())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login/senha inválido!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
 
         if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login/senha inválido!");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!");
         }
 
-        return user;
+        return UserCreatedDto.builder()
+                .login(user.getLogin())
+                .nickname(user.getNickname())
+                .createdAt(user.getCreatedAt())
+                .build();
     }
 }

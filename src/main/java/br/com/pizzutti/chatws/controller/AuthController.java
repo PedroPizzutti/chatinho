@@ -1,9 +1,6 @@
 package br.com.pizzutti.chatws.controller;
 
-import br.com.pizzutti.chatws.dto.TokenDto;
-import br.com.pizzutti.chatws.dto.UserCreateDto;
-import br.com.pizzutti.chatws.dto.UserCreatedDto;
-import br.com.pizzutti.chatws.dto.UserLoginDto;
+import br.com.pizzutti.chatws.dto.*;
 import br.com.pizzutti.chatws.facade.UserFacade;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +20,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody UserLoginDto userLoginDto) {
-        var token = this.userFacade.generateToken(userLoginDto);
-        return ResponseEntity.status(201).body(token);
+    public ResponseEntity<UserLoggedDto> login(@RequestBody UserLoginDto userLoginDto) {
+        var userLoggedDto = this.userFacade.loginApi(userLoginDto);
+        return ResponseEntity.status(201).body(userLoggedDto);
     }
 
     @PostMapping("/create-user")

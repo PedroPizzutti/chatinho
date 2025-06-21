@@ -1,9 +1,6 @@
 package br.com.pizzutti.chatws.facade;
 
-import br.com.pizzutti.chatws.dto.TokenDto;
-import br.com.pizzutti.chatws.dto.UserCreateDto;
-import br.com.pizzutti.chatws.dto.UserCreatedDto;
-import br.com.pizzutti.chatws.dto.UserLoginDto;
+import br.com.pizzutti.chatws.dto.*;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.service.TokenService;
 import br.com.pizzutti.chatws.service.TotemService;
@@ -23,7 +20,16 @@ public class UserFacade {
         this.tokenService = tokenService;
     }
 
-    public User login(String token) {
+    public UserLoggedDto loginApi(UserLoginDto userLoginDto) {
+        var userCreatedDto = this.userService.login(userLoginDto);
+        var tokenDto = this.tokenService.generateToken(userCreatedDto);
+        return UserLoggedDto.builder()
+                .user(userCreatedDto)
+                .token(tokenDto)
+                .build();
+    }
+
+    public User loginWebSocket(String token) {
         var login = this.tokenService.validateToken(token);
         return this.userService.findByLogin(login);
     }
@@ -31,10 +37,5 @@ public class UserFacade {
     public UserCreatedDto createUser(UserCreateDto userCreateDto) {
         this.totemService.burn(userCreateDto.totem());
         return this.userService.create(userCreateDto);
-    }
-
-    public TokenDto generateToken(UserLoginDto userLoginDto) {
-        var user = this.userService.login(userLoginDto);
-        return this.tokenService.generateToken(user);
     }
 }
