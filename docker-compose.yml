@@ -1,6 +1,52 @@
 services:
+  mysql:
+    image: mysql:8.0.3
+    container_name: mysql_server
+    restart: always
+    ports:
+      - "3306:3306"
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      TZ: America/Sao_Paulo
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - proxy_network
+
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    networks:
+      - proxy_network
+
   app:
     build: .
     container_name: chat-ws
+    restart: always
     ports:
       - "14500:14500"
+    depends_on:
+      - mysql
+      - rabbitmq
+    networks:
+      - proxy_network
+
+volumes:
+  mysql_data:
+  rabbitmq_data:
+
+networks:
+  proxy_network:
+    external: true
