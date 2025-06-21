@@ -8,11 +8,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
-public class ChatWebSocketHandlerComponent extends TextWebSocketHandler {
+public class WebSocketHandlerComponent extends TextWebSocketHandler {
 
     private final WebSocketFacade webSocketFacade;
 
-    public ChatWebSocketHandlerComponent(WebSocketFacade webSocketFacade) {
+    public WebSocketHandlerComponent(WebSocketFacade webSocketFacade) {
         this.webSocketFacade = webSocketFacade;
     }
 
