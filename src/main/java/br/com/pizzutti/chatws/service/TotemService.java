@@ -20,7 +20,7 @@ public class TotemService {
     private Totem findByGuid(String guid) {
         return this.totemRepository
                 .findByGuid(guid)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Totem inválido!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem inválido!"));
     }
 
     private void invalidate(Totem totem) {
@@ -30,13 +30,13 @@ public class TotemService {
 
     private void validateIsUsed(Totem totem) {
         if (totem.getUsed()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Totem já utilizado!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem já utilizado!");
         }
     }
 
     private void validateIsExpired(Totem totem) {
         if (LocalDateTime.now().isAfter((totem.getCreatedAt().plusHours(totem.getExpiresIn())))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Totem expirado!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem expirado!");
         }
     }
 
