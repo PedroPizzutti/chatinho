@@ -2,7 +2,6 @@ package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.dto.UserCreateDto;
 import br.com.pizzutti.chatws.dto.UserCreatedDto;
-import br.com.pizzutti.chatws.dto.UserLoggedDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.repository.UserRepository;
@@ -11,17 +10,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TimeService timeService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       TimeService timeService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.timeService = timeService;
     }
 
     public UserCreatedDto create(UserCreateDto userCreateDto) {
@@ -29,16 +30,11 @@ public class UserService {
                 .login(userCreateDto.login())
                 .nickname(userCreateDto.nickname())
                 .password(passwordEncoder.encode(userCreateDto.password()))
-                .createdAt(LocalDateTime.now())
+                .createdAt(this.timeService.now())
                 .build();
 
-        this.userRepository.save(user);
-
-        return UserCreatedDto.builder()
-                .login(user.getLogin())
-                .nickname(user.getNickname())
-                .createdAt(user.getCreatedAt())
-                .build();
+        this.userRepository.saveAndFlush(user);
+        return UserCreatedDto.fromUser(user);
     }
 
     public User findByLogin(String login) {
@@ -62,10 +58,6 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!");
         }
 
-        return UserCreatedDto.builder()
-                .login(user.getLogin())
-                .nickname(user.getNickname())
-                .createdAt(user.getCreatedAt())
-                .build();
+        return UserCreatedDto.fromUser(user);
     }
 }
