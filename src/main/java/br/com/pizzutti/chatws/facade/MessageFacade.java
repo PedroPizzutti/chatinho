@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.dto.MessageDto;
+import br.com.pizzutti.chatws.dto.MessagePageDto;
 import br.com.pizzutti.chatws.model.Message;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.service.MessageService;
@@ -35,11 +36,19 @@ public class MessageFacade {
         return this.messageService.create(message);
     }
 
-    public Page<MessageDto> findLatest() {
+    public MessagePageDto findLatest() {
         var pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt"));
         var page = this.messageService.findAll(pageable);
-        var messages = page.getContent().stream().map(this::getMessageDto).toList();
-        return new PageImpl<>(messages.reversed(), pageable, page.getTotalElements());
+        var messages = page.getContent().stream().map(this::getMessageDto).toList().reversed();
+        return MessagePageDto
+                .builder()
+                .data(messages)
+                .page(page.getNumber() + 1)
+                .perPage(page.getSize())
+                .totalPages(page.getTotalPages())
+                .records(page.getNumberOfElements())
+                .totalRecords(page.getTotalElements())
+                .build();
     }
 
     private MessageDto getMessageDto(Message message) {
