@@ -12,9 +12,12 @@ import java.time.LocalDateTime;
 public class TotemService {
 
     private final TotemRepository totemRepository;
+    private final TimeService timeService;
 
-    public TotemService(TotemRepository totemRepository) {
+    public TotemService(TotemRepository totemRepository,
+                        TimeService timeService) {
         this.totemRepository = totemRepository;
+        this.timeService = timeService;
     }
 
     private Totem findByGuid(String guid) {
@@ -35,7 +38,7 @@ public class TotemService {
     }
 
     private void validateIsExpired(Totem totem) {
-        if (LocalDateTime.now().isAfter((totem.getCreatedAt().plusHours(totem.getExpiresIn())))) {
+        if (this.timeService.now().isAfter((totem.getCreatedAt().plusHours(totem.getExpiresIn())))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem expirado!");
         }
     }

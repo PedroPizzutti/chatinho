@@ -3,8 +3,8 @@ package br.com.pizzutti.chatws.repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Repository
 public class TimeRepository {
@@ -18,8 +18,8 @@ public class TimeRepository {
     public LocalDateTime now() {
         String sql = "SELECT NOW()";
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
-            var timestamp = rs.getTimestamp(1);
-            return timestamp.toLocalDateTime();
+            var instant = rs.getTimestamp(1).toInstant();
+            return LocalDateTime.ofInstant(instant, ZoneId.of("America/Sao_Paulo"));
         });
     }
 }
