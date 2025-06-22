@@ -33,6 +33,7 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "v1/status",
                                 "v1/auth/**",
                                 "v1/ws/**",
                                 "v3/api-docs/**",
