@@ -1,14 +1,20 @@
 package br.com.pizzutti.chatws.component;
 
+import br.com.pizzutti.chatws.dto.AdviceDto;
+import br.com.pizzutti.chatws.enums.AdviceEnum;
+import br.com.pizzutti.chatws.service.TimeService;
 import br.com.pizzutti.chatws.service.TokenService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,9 +23,15 @@ import java.util.List;
 public class JwtAuthFilterComponent extends OncePerRequestFilter {
 
     private final TokenService tokenService;
+    private final TimeService timeService;
+    private final ObjectMapper mapper;
 
-    public JwtAuthFilterComponent(TokenService tokenService) {
+    public JwtAuthFilterComponent(TokenService tokenService,
+                                  TimeService timeService,
+                                  ObjectMapper mapper) {
         this.tokenService = tokenService;
+        this.timeService = timeService;
+        this.mapper = mapper;
     }
 
     @Override
@@ -41,7 +53,16 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            var adviceDto = AdviceDto.builder()
+                    .path(request.getRequestURI())
+                    .status(401)
+                    .timestamp(this.timeService.now())
+                    .code(AdviceEnum.INVALID_CREDENTIALS)
+                    .errors(List.of(e.getLocalizedMessage()))
+                    .build();
+            response.setStatus(adviceDto.status());
+            response.setContentType("application/json");
+            response.getWriter().write(mapper.writeValueAsString(adviceDto));
         }
     }
 }

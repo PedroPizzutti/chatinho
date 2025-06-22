@@ -61,7 +61,7 @@ public class TokenService {
             var jwtClaims = jwtConsumer.processToClaims(token);
             return jwtClaims.getSubject();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getLocalizedMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token inválido!");
         }
     }
 }
