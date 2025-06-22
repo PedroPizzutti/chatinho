@@ -9,13 +9,13 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 @Configuration
 @EnableWebSocket
-public class ChatWebSocketConfig implements WebSocketConfigurer {
+public class WebSocketConfig implements WebSocketConfigurer {
 
     private final WebSocketHandlerComponent webSocketHandlerComponent;
     private final JwtHandshakeInterceptorComponent jwtHandshakeInterceptorComponent;
 
-    public ChatWebSocketConfig(WebSocketHandlerComponent webSocketHandlerComponent,
-                               JwtHandshakeInterceptorComponent jwtHandshakeInterceptorComponent) {
+    public WebSocketConfig(WebSocketHandlerComponent webSocketHandlerComponent,
+                           JwtHandshakeInterceptorComponent jwtHandshakeInterceptorComponent) {
         this.webSocketHandlerComponent = webSocketHandlerComponent;
         this.jwtHandshakeInterceptorComponent = jwtHandshakeInterceptorComponent;
     }
