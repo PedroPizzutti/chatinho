@@ -17,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,8 +36,11 @@ public class MessageController {
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<MessagePageDto> listLatest() {
-        return ResponseEntity.ok(this.messageFacade.findLatest());
+    public ResponseEntity<MessagePageDto> listLatest(
+            @RequestParam(required = false, defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "20") Integer perPage
+    ) {
+        return ResponseEntity.ok(this.messageFacade.findLatest(page, perPage));
     }
 
 }

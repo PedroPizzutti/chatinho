@@ -36,18 +36,18 @@ public class MessageFacade {
         return this.messageService.create(message);
     }
 
-    public MessagePageDto findLatest() {
-        var pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt"));
-        var page = this.messageService.findAll(pageable);
-        var messages = page.getContent().stream().map(this::getMessageDto).toList().reversed();
+    public MessagePageDto findLatest(Integer page, Integer perPage) {
+        var pageable = PageRequest.of(page - 1, perPage, Sort.by(Sort.Direction.DESC, "createdAt"));
+        var pageMessages = this.messageService.findAll(pageable);
+        var messagesReversed = pageMessages.getContent().stream().map(this::getMessageDto).toList().reversed();
         return MessagePageDto
                 .builder()
-                .data(messages)
-                .page(page.getNumber() + 1)
-                .perPage(page.getSize())
-                .totalPages(page.getTotalPages())
-                .records(page.getNumberOfElements())
-                .totalRecords(page.getTotalElements())
+                .data(messagesReversed)
+                .page(pageMessages.getNumber() + 1)
+                .perPage(pageMessages.getSize())
+                .totalPages(pageMessages.getTotalPages())
+                .records(pageMessages.getNumberOfElements())
+                .totalRecords(pageMessages.getTotalElements())
                 .build();
     }
 
