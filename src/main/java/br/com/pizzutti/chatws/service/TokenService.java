@@ -2,7 +2,6 @@ package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.dto.TokenDto;
 import br.com.pizzutti.chatws.dto.UserCreatedDto;
-import br.com.pizzutti.chatws.model.User;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;

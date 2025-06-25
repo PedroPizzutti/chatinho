@@ -32,14 +32,7 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "v1/status",
-                                "v1/auth/**",
-                                "v1/ws/**",
-                                "v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        )
+                        .requestMatchers(PublicRoutesConfig.PATHS.toArray(new String[0]))
                         .permitAll()
                         .anyRequest()
                         .authenticated()

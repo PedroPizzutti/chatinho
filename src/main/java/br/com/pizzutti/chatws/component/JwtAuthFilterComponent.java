@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.component;
 
+import br.com.pizzutti.chatws.config.PublicRoutesConfig;
 import br.com.pizzutti.chatws.dto.AdviceDto;
 import br.com.pizzutti.chatws.enums.AdviceEnum;
 import br.com.pizzutti.chatws.service.TimeService;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.util.List;
 @Component
 public class JwtAuthFilterComponent extends OncePerRequestFilter {
 
+    private final AntPathMatcher matcher;
     private final TokenService tokenService;
     private final TimeService timeService;
     private final ObjectMapper mapper;
@@ -30,6 +33,7 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
         this.tokenService = tokenService;
         this.timeService = timeService;
         this.mapper = mapper;
+        this.matcher = new AntPathMatcher();
     }
 
     @Override
@@ -37,8 +41,12 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        if (isPublicPath(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -62,5 +70,9 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.getWriter().write(mapper.writeValueAsString(adviceDto));
         }
+    }
+
+    private boolean isPublicPath(String path) {
+        return PublicRoutesConfig.PATHS.stream().anyMatch(p -> matcher.match(p, path));
     }
 }
