@@ -30,19 +30,30 @@ public class TokenService {
 
     public TokenDto generateToken(UserCreatedDto user) {
         try {
-            var jwtClaims = new JwtClaims();
-            jwtClaims.setSubject(user.login());
-            jwtClaims.setIssuedAtToNow();
-            jwtClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
+            var accessTokenClaims = new JwtClaims();
+            accessTokenClaims.setSubject(user.login());
+            accessTokenClaims.setIssuedAtToNow();
+            accessTokenClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
 
-            var jws = new JsonWebSignature();
-            jws.setPayload(jwtClaims.toJson());
-            jws.setAlgorithmHeaderValue("HS256");
-            jws.setKey(this.getKey());
+            var accessTokenJws = new JsonWebSignature();
+            accessTokenJws.setPayload(accessTokenClaims.toJson());
+            accessTokenJws.setAlgorithmHeaderValue("HS256");
+            accessTokenJws.setKey(this.getKey());
 
-            var jwt = jws.getCompactSerialization();
+            var refreshTokenClaims = new JwtClaims();
+            refreshTokenClaims.setSubject(user.login());
+            refreshTokenClaims.setIssuedAtToNow();
+            refreshTokenClaims.setExpirationTimeMinutesInTheFuture(expiration * 60f);
 
-            return new TokenDto(jwt, "Bearer", expiration);
+            var refreshTokenJWs = new JsonWebSignature();
+            refreshTokenJWs.setPayload(refreshTokenClaims.toJson());
+            refreshTokenJWs.setAlgorithmHeaderValue("HS256");
+            refreshTokenJWs.setKey(this.getKey());
+
+            var accessToken = accessTokenJws.getCompactSerialization();
+            var refreshToken = refreshTokenJWs.getCompactSerialization();
+
+            return new TokenDto(accessToken, refreshToken, "Bearer", expiration);
         } catch (JoseException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
         }
