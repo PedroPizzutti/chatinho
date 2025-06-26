@@ -39,10 +39,9 @@ public class MessageFacade {
     public MessagePageDto findLatest(Integer page, Integer perPage) {
         var pageable = PageRequest.of(page - 1, perPage, Sort.by(Sort.Direction.DESC, "createdAt"));
         var pageMessages = this.messageService.findAll(pageable);
-        var messagesReversed = pageMessages.getContent().stream().map(this::getMessageDto).toList().reversed();
         return MessagePageDto
                 .builder()
-                .data(messagesReversed)
+                .data(pageMessages.getContent().stream().map(this::getMessageDto).toList())
                 .page(pageMessages.getNumber() + 1)
                 .perPage(pageMessages.getSize())
                 .totalPages(pageMessages.getTotalPages())
