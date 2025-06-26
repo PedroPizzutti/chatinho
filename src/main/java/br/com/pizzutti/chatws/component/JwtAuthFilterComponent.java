@@ -3,7 +3,6 @@ package br.com.pizzutti.chatws.component;
 import br.com.pizzutti.chatws.config.PublicRoutesConfig;
 import br.com.pizzutti.chatws.dto.AdviceDto;
 import br.com.pizzutti.chatws.enums.AdviceEnum;
-import br.com.pizzutti.chatws.service.TimeService;
 import br.com.pizzutti.chatws.service.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -24,14 +23,11 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
 
     private final AntPathMatcher matcher;
     private final TokenService tokenService;
-    private final TimeService timeService;
     private final ObjectMapper mapper;
 
     public JwtAuthFilterComponent(TokenService tokenService,
-                                  TimeService timeService,
                                   ObjectMapper mapper) {
         this.tokenService = tokenService;
-        this.timeService = timeService;
         this.mapper = mapper;
         this.matcher = new AntPathMatcher();
     }
@@ -62,7 +58,7 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
             var adviceDto = AdviceDto.builder()
                     .path(request.getRequestURI())
                     .status(401)
-                    .timestamp(this.timeService.now())
+                    .timestamp(TimeComponent.getInstance().now())
                     .code(AdviceEnum.INVALID_CREDENTIALS)
                     .errors(List.of(e.getLocalizedMessage()))
                     .build();

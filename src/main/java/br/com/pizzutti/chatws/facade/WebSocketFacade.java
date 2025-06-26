@@ -1,7 +1,7 @@
 package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.dto.MessageDto;
-import br.com.pizzutti.chatws.service.TimeService;
+import br.com.pizzutti.chatws.component.TimeComponent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,15 +19,12 @@ import java.util.Set;
 public class WebSocketFacade {
 
     private final ObjectMapper mapper;
-    private final TimeService timeService;
     private final RabbitTemplate rabbitTemplate;
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
     public WebSocketFacade(ObjectMapper mapper,
-                           TimeService timeService,
                            RabbitTemplate rabbitTemplate) {
         this.mapper = mapper;
-        this.timeService = timeService;
         this.rabbitTemplate = rabbitTemplate;
     }
 
@@ -71,7 +68,7 @@ public class WebSocketFacade {
                 .user(this.getUserFromSession(session))
                 .nick(this.getNickFromSession(session))
                 .content(message)
-                .createdAt(this.timeService.now())
+                .createdAt(TimeComponent.getInstance().now())
                 .build();
     }
 

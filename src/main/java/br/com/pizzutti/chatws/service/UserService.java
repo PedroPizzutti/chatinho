@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.service;
 
+import br.com.pizzutti.chatws.component.TimeComponent;
 import br.com.pizzutti.chatws.dto.UserCreateDto;
 import br.com.pizzutti.chatws.dto.UserCreatedDto;
 import br.com.pizzutti.chatws.dto.UserLoginDto;
@@ -15,14 +16,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TimeService timeService;
 
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       TimeService timeService) {
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.timeService = timeService;
     }
 
     public UserCreatedDto create(UserCreateDto userCreateDto) {
@@ -30,7 +28,7 @@ public class UserService {
                 .login(userCreateDto.login())
                 .nickname(userCreateDto.nickname())
                 .password(passwordEncoder.encode(userCreateDto.password()))
-                .createdAt(this.timeService.now())
+                .createdAt(TimeComponent.getInstance().now())
                 .build();
 
         this.userRepository.saveAndFlush(user);
