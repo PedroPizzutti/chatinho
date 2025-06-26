@@ -50,7 +50,7 @@ public class JwtAuthFilterComponent extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
         try {
-            var user = tokenService.validateToken(token);
+            var user = tokenService.validateAccessToken(token);
             var auth = new UsernamePasswordAuthenticationToken(user, null, List.of());
             SecurityContextHolder.getContext().setAuthentication(auth);
             filterChain.doFilter(request, response);

@@ -22,7 +22,7 @@ public class UserFacade {
 
     public UserLoggedDto loginApi(UserLoginDto userLoginDto) {
         var userCreatedDto = this.userService.login(userLoginDto);
-        var tokenDto = this.tokenService.generateToken(userCreatedDto);
+        var tokenDto = this.tokenService.generateToken(userCreatedDto.login());
         return UserLoggedDto.builder()
                 .user(userCreatedDto)
                 .token(tokenDto)
@@ -30,7 +30,7 @@ public class UserFacade {
     }
 
     public User loginWebSocket(String token) {
-        var login = this.tokenService.validateToken(token);
+        var login = this.tokenService.validateAccessToken(token);
         return this.userService.findByLogin(login);
     }
 
