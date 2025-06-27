@@ -1,8 +1,6 @@
 package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.dto.TokenDto;
-import br.com.pizzutti.chatws.dto.UserCreateDto;
-import br.com.pizzutti.chatws.dto.UserCreatedDto;
 import br.com.pizzutti.chatws.model.Token;
 import br.com.pizzutti.chatws.repository.TokenRepository;
 import org.jose4j.jws.JsonWebSignature;
@@ -34,9 +32,8 @@ public class TokenService {
 
     public TokenDto generateToken(String login) {
         var accessToken = this.generateAccessToken(login);
-        var refreshToken = this.generatedRefreshToken(accessToken);
+        var refreshToken = this.generatedRefreshToken(login);
         this.tokenRepository.save(Token.builder().jwt(refreshToken).build());
-
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -45,52 +42,6 @@ public class TokenService {
                 .build();
     }
 
-    private Key getKey() {
-        var secretBytes = secret.getBytes(StandardCharsets.UTF_8);
-        return new HmacKey(secretBytes);
-    }
-
-    private Key getReversedKey() {
-        var secretBytes = new StringBuilder(secret).reverse().toString().getBytes(StandardCharsets.UTF_8);
-        return new HmacKey(secretBytes);
-    }
-
-    private String generateAccessToken(String subject) {
-        try {
-            var accessTokenClaims = new JwtClaims();
-            accessTokenClaims.setSubject(subject);
-            accessTokenClaims.setIssuedAtToNow();
-            accessTokenClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
-
-            var accessTokenJws = new JsonWebSignature();
-            accessTokenJws.setPayload(accessTokenClaims.toJson());
-            accessTokenJws.setAlgorithmHeaderValue("HS256");
-            accessTokenJws.setKey(this.getKey());
-
-            return accessTokenJws.getCompactSerialization();
-        } catch (JoseException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
-        }
-    }
-
-    private String generatedRefreshToken(String subject) {
-        try {
-            var refreshTokenClaims = new JwtClaims();
-            refreshTokenClaims.setSubject(subject);
-            refreshTokenClaims.setGeneratedJwtId();
-            refreshTokenClaims.setIssuedAtToNow();
-            refreshTokenClaims.setExpirationTimeMinutesInTheFuture(expiration * 60f);
-
-            var refreshTokenJWs = new JsonWebSignature();
-            refreshTokenJWs.setPayload(refreshTokenClaims.toJson());
-            refreshTokenJWs.setAlgorithmHeaderValue("HS256");
-            refreshTokenJWs.setKey(this.getReversedKey());
-
-            return refreshTokenJWs.getCompactSerialization();
-        } catch (JoseException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
-        }
-    }
 
     public String validateAccessToken(String token) {
         try {
@@ -125,6 +76,55 @@ public class TokenService {
             return jwtClaims.getSubject();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token inválido!");
+        }
+    }
+
+    private Key getKey() {
+        var secretBytes = secret.getBytes(StandardCharsets.UTF_8);
+        return new HmacKey(secretBytes);
+    }
+
+    private Key getReversedKey() {
+        var secretBytes = new StringBuilder(secret).reverse().toString().getBytes(StandardCharsets.UTF_8);
+        return new HmacKey(secretBytes);
+    }
+
+    private String generateAccessToken(String subject) {
+        try {
+            var accessTokenClaims = new JwtClaims();
+            accessTokenClaims.setSubject(subject);
+            accessTokenClaims.setIssuer("chat-ws");
+            accessTokenClaims.setIssuedAtToNow();
+            accessTokenClaims.setExpirationTimeMinutesInTheFuture(expiration / 60f);
+
+            var accessTokenJws = new JsonWebSignature();
+            accessTokenJws.setPayload(accessTokenClaims.toJson());
+            accessTokenJws.setAlgorithmHeaderValue("HS256");
+            accessTokenJws.setKey(this.getKey());
+
+            return accessTokenJws.getCompactSerialization();
+        } catch (JoseException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
+        }
+    }
+
+    private String generatedRefreshToken(String subject) {
+        try {
+            var refreshTokenClaims = new JwtClaims();
+            refreshTokenClaims.setSubject(subject);
+            refreshTokenClaims.setGeneratedJwtId();
+            refreshTokenClaims.setIssuer("chat-ws");
+            refreshTokenClaims.setIssuedAtToNow();
+            refreshTokenClaims.setExpirationTimeMinutesInTheFuture(expiration * 60f);
+
+            var refreshTokenJWs = new JsonWebSignature();
+            refreshTokenJWs.setPayload(refreshTokenClaims.toJson());
+            refreshTokenJWs.setAlgorithmHeaderValue("HS256");
+            refreshTokenJWs.setKey(this.getReversedKey());
+
+            return refreshTokenJWs.getCompactSerialization();
+        } catch (JoseException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getLocalizedMessage());
         }
     }
 

@@ -35,6 +35,20 @@ public class AuthController {
         return ResponseEntity.status(201).body(userLoggedDto);
     }
 
+    @PostMapping("/refresh-login")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserLoggedDto.class))),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+    })
+    public ResponseEntity<UserLoggedDto> refreshLogin(@RequestBody RefreshTokenDto refreshTokenDto) {
+        var userLoggedDto = this.userFacade.refreshLoginApi(refreshTokenDto);
+        return ResponseEntity.status(201).body(userLoggedDto);
+    }
+
+
+
     @PostMapping("/create-user")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserCreatedDto.class))),

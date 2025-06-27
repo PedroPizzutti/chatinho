@@ -29,6 +29,16 @@ public class UserFacade {
                 .build();
     }
 
+    public UserLoggedDto refreshLoginApi(RefreshTokenDto refreshTokenDto) {
+        var login = this.tokenService.validateRefreshToken(refreshTokenDto.jwt());
+        var userCreatedDto = UserCreatedDto.fromUser(this.userService.findByLogin(login));
+        var tokenDto = this.tokenService.generateToken(login);
+        return UserLoggedDto.builder()
+                .user(userCreatedDto)
+                .token(tokenDto)
+                .build();
+    }
+
     public User loginWebSocket(String token) {
         var login = this.tokenService.validateAccessToken(token);
         return this.userService.findByLogin(login);
