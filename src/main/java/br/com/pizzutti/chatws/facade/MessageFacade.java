@@ -30,7 +30,7 @@ public class MessageFacade {
         var user = this.userService.findByLogin(messageDto.user());
         var message = Message.builder()
                 .createdAt(messageDto.createdAt())
-                .userId(user.getId())
+                .owner(user.getId())
                 .content(messageDto.content())
                 .build();
         return this.messageService.create(message);
@@ -52,10 +52,10 @@ public class MessageFacade {
 
     private MessageDto getMessageDto(Message message) {
         User user = null;
-        if (listUser.containsKey(message.getUserId())) {
-            user = listUser.get(message.getUserId());
+        if (listUser.containsKey(message.getOwner())) {
+            user = listUser.get(message.getOwner());
         } else {
-            user = this.userService.findById(message.getUserId());
+            user = this.userService.findById(message.getOwner());
             this.listUser.put(user.getId(), user);
         }
         return MessageDto.builder()

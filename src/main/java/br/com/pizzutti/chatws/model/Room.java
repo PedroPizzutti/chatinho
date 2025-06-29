@@ -6,22 +6,21 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "message")
+@Table(name = "room")
 @Builder
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
+public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "guid")
+    private String guid;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "content", columnDefinition = "TEXT")
-    private String content;
 
     @Column(name = "owner")
     private Long owner;

@@ -1,28 +1,33 @@
 package br.com.pizzutti.chatws.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "message")
+@Table(name = "member")
+@Data
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "guid")
+    private String guid;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "content", columnDefinition = "TEXT")
-    private String content;
-
-    @Column(name = "owner")
+    @Column(name = "user")
     private Long owner;
+
+    @Column(name = "room")
+    private Long user;
 }

@@ -22,7 +22,7 @@ public class UserFacade {
 
     public UserLoggedDto loginApi(UserLoginDto userLoginDto) {
         var userCreatedDto = this.userService.login(userLoginDto);
-        var tokenDto = this.tokenService.generateToken(userCreatedDto.login());
+        var tokenDto = this.tokenService.generateToken(userCreatedDto);
         return UserLoggedDto.builder()
                 .user(userCreatedDto)
                 .token(tokenDto)
@@ -31,7 +31,8 @@ public class UserFacade {
 
     public TokenDto refreshLoginApi(RefreshTokenDto refreshTokenDto) {
         var login = this.tokenService.validateRefreshToken(refreshTokenDto.jwt());
-        return this.tokenService.generateToken(login);
+        var user = this.userService.findByLogin(login);
+        return this.tokenService.generateToken(UserCreatedDto.fromUser(user));
     }
 
     public User loginWebSocket(String token) {
