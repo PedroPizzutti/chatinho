@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MessageDto(
-        String room,
-        String user,
+        Long room,
+        Long user,
         String nick,
         String content,
-        MessageEnum type,
+        String type,
         LocalDateTime createdAt
 ) {}

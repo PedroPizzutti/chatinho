@@ -16,8 +16,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "guid")
-    private String guid;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

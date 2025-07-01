@@ -33,14 +33,9 @@ public class TokenService {
     }
 
     public TokenDto generateToken(UserCreatedDto userCreatedDto) {
-        var accessToken = this.generateAccessToken(userCreatedDto.login());
-        var refreshToken = this.generatedRefreshToken(userCreatedDto.login());
-        var token = Token.builder()
-                .owner(userCreatedDto.id())
-                .createdAt(TimeComponent.getInstance().now())
-                .jwt(refreshToken)
-                .build();
-        this.tokenRepository.save(token);
+        var accessToken = this.generateAccessToken(userCreatedDto.id().toString());
+        var refreshToken = this.generatedRefreshToken(userCreatedDto.id().toString());
+        this.saveRefreshToken(userCreatedDto, refreshToken);
 
         return TokenDto.builder()
                 .accessToken(accessToken)
@@ -49,7 +44,6 @@ public class TokenService {
                 .tokenType("Bearer")
                 .build();
     }
-
 
     public String validateAccessToken(String token) {
         try {
@@ -136,4 +130,12 @@ public class TokenService {
         }
     }
 
+    private void saveRefreshToken(UserCreatedDto userCreatedDto, String refreshToken) {
+        var token = Token.builder()
+                .owner(userCreatedDto.id())
+                .createdAt(TimeComponent.getInstance().now())
+                .jwt(refreshToken)
+                .build();
+        this.tokenRepository.save(token);
+    }
 }

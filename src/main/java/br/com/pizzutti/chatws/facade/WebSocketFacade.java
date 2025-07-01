@@ -23,7 +23,7 @@ public class WebSocketFacade {
 
     private final ObjectMapper mapper;
     private final RabbitTemplate rabbitTemplate;
-    private final Map<String, Set<WebSocketSession>> rooms;
+    private final Map<Long, Set<WebSocketSession>> rooms;
 
     public WebSocketFacade(ObjectMapper mapper,
                            RabbitTemplate rabbitTemplate) {
@@ -79,22 +79,22 @@ public class WebSocketFacade {
                 .room(this.getRoomFromSession(session))
                 .user(this.getUserFromSession(session))
                 .nick(this.getNickFromSession(session))
-                .type(type)
+                .type(type.asString())
                 .content(message)
                 .createdAt(TimeComponent.getInstance().now())
                 .build();
     }
 
-    private String getUserFromSession(WebSocketSession session) {
-        return (String) session.getAttributes().get("user");
+    private Long getUserFromSession(WebSocketSession session) {
+        return Long.parseLong((String) session.getAttributes().get("user"));
     }
 
     private String getNickFromSession(WebSocketSession session) {
         return (String) session.getAttributes().get("nick");
     }
 
-    private String getRoomFromSession(WebSocketSession session) {
-        return (String) session.getAttributes().get("room");
+    private Long getRoomFromSession(WebSocketSession session) {
+        return Long.parseLong((String) session.getAttributes().get("room"));
     }
 
 }

@@ -30,14 +30,14 @@ public class UserFacade {
     }
 
     public TokenDto refreshLoginApi(RefreshTokenDto refreshTokenDto) {
-        var login = this.tokenService.validateRefreshToken(refreshTokenDto.jwt());
-        var user = this.userService.findByLogin(login);
+        var userId = this.tokenService.validateRefreshToken(refreshTokenDto.jwt());
+        var user = this.userService.findById(Long.parseLong(userId));
         return this.tokenService.generateToken(UserCreatedDto.fromUser(user));
     }
 
     public User loginWebSocket(String token) {
-        var login = this.tokenService.validateAccessToken(token);
-        return this.userService.findByLogin(login);
+        var userId = this.tokenService.validateAccessToken(token);
+        return this.userService.findById(Long.parseLong(userId));
     }
 
     public UserCreatedDto createUser(UserCreateDto userCreateDto) {

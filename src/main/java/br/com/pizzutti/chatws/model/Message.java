@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.model;
 
+import br.com.pizzutti.chatws.enums.MessageEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,12 @@ public class Message {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "owner")
-    private Long owner;
+    @Column(name = "type")
+    private String type;
+
+    @Column(name = "room")
+    private Long room;
+
+    @Column(name = "user")
+    private Long user;
 }
