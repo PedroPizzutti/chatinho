@@ -19,15 +19,12 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "guid")
-    private String guid;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "user")
-    private Long owner;
+    private Long user;
 
     @Column(name = "room")
-    private Long user;
+    private Long room;
 }

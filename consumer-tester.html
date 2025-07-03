@@ -37,12 +37,11 @@
             }
         })
         .then(response => {
-            appendMessage(response.status);
             if (!response.ok) throw new Error('Erro ao buscar mensagens: ' + response.status);
             return response.json();
         })
         .then(data => {
-            data.content.forEach(msg => {appendMessage(JSON.stringify(msg))});
+            data.data.forEach(msg => {appendMessage(JSON.stringify(msg))});
         })
         .catch(err => {appendMessage('Erro ao carregar mensagens: ' + err.message)});
         appendMessage('Conectado ao servidor WebSocket.');

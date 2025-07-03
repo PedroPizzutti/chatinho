@@ -2,7 +2,7 @@ package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.component.TimeComponent;
 import br.com.pizzutti.chatws.dto.TokenDto;
-import br.com.pizzutti.chatws.dto.UserCreatedDto;
+import br.com.pizzutti.chatws.dto.UserDto;
 import br.com.pizzutti.chatws.model.Token;
 import br.com.pizzutti.chatws.repository.TokenRepository;
 import org.jose4j.jws.JsonWebSignature;
@@ -32,10 +32,10 @@ public class TokenService {
         this.tokenRepository = tokenRepository;
     }
 
-    public TokenDto generateToken(UserCreatedDto userCreatedDto) {
-        var accessToken = this.generateAccessToken(userCreatedDto.id().toString());
-        var refreshToken = this.generatedRefreshToken(userCreatedDto.id().toString());
-        this.saveRefreshToken(userCreatedDto, refreshToken);
+    public TokenDto generateToken(UserDto userDto) {
+        var accessToken = this.generateAccessToken(userDto.id().toString());
+        var refreshToken = this.generatedRefreshToken(userDto.id().toString());
+        this.saveRefreshToken(userDto, refreshToken);
 
         return TokenDto.builder()
                 .accessToken(accessToken)
@@ -130,9 +130,9 @@ public class TokenService {
         }
     }
 
-    private void saveRefreshToken(UserCreatedDto userCreatedDto, String refreshToken) {
+    private void saveRefreshToken(UserDto userDto, String refreshToken) {
         var token = Token.builder()
-                .owner(userCreatedDto.id())
+                .owner(userDto.id())
                 .createdAt(TimeComponent.getInstance().now())
                 .jwt(refreshToken)
                 .build();

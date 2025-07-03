@@ -1,9 +1,9 @@
 package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.component.TimeComponent;
-import br.com.pizzutti.chatws.dto.UserCreateDto;
-import br.com.pizzutti.chatws.dto.UserCreatedDto;
-import br.com.pizzutti.chatws.dto.UserLoginDto;
+import br.com.pizzutti.chatws.dto.UserInputDto;
+import br.com.pizzutti.chatws.dto.UserDto;
+import br.com.pizzutti.chatws.dto.LoginDto;
 import br.com.pizzutti.chatws.model.User;
 import br.com.pizzutti.chatws.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -23,16 +23,16 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserCreatedDto create(UserCreateDto userCreateDto) {
+    public UserDto create(UserInputDto userInputDto) {
         var user = User.builder()
-                .login(userCreateDto.login())
-                .nickname(userCreateDto.nickname())
-                .password(passwordEncoder.encode(userCreateDto.password()))
+                .login(userInputDto.login())
+                .nickname(userInputDto.nickname())
+                .password(passwordEncoder.encode(userInputDto.password()))
                 .createdAt(TimeComponent.getInstance().now())
                 .build();
 
         this.userRepository.saveAndFlush(user);
-        return UserCreatedDto.fromUser(user);
+        return UserDto.fromUser(user);
     }
 
     public User findByLogin(String login) {
@@ -47,15 +47,15 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuário não encontrado!"));
     }
 
-    public UserCreatedDto login(UserLoginDto userLoginDto) {
+    public UserDto login(LoginDto loginDto) {
         var user = this.userRepository
-                .findByLogin(userLoginDto.login())
+                .findByLogin(loginDto.login())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
 
-        if (!passwordEncoder.matches(userLoginDto.password(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!");
         }
 
-        return UserCreatedDto.fromUser(user);
+        return UserDto.fromUser(user);
     }
 }

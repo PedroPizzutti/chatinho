@@ -25,31 +25,31 @@ public class AuthController {
 
     @PostMapping("/create-user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserCreatedDto.class))),
+            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<UserCreatedDto> createUser(@RequestBody @Valid UserCreateDto userCreateDto) {
-        var user = this.userFacade.createUser(userCreateDto);
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserInputDto userInputDto) {
+        var user = this.userFacade.createUser(userInputDto);
         return ResponseEntity.status(201).body(user);
     }
 
     @PostMapping("/login")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserLoggedDto.class))),
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
         @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<UserLoggedDto> login(@RequestBody UserLoginDto userLoginDto) {
-        var userLoggedDto = this.userFacade.loginApi(userLoginDto);
+    public ResponseEntity<UserTokenDto> login(@RequestBody LoginDto loginDto) {
+        var userLoggedDto = this.userFacade.loginApi(loginDto);
         return ResponseEntity.status(201).body(userLoggedDto);
     }
 
     @PostMapping("/refresh-login")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserLoggedDto.class))),
+            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))

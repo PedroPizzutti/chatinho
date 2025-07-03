@@ -1,6 +1,5 @@
 package br.com.pizzutti.chatws.model;
 
-import br.com.pizzutti.chatws.dto.UserCreateDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
