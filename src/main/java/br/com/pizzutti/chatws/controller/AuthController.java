@@ -2,6 +2,7 @@ package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.*;
 import br.com.pizzutti.chatws.facade.UserFacade;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/create-user")
+    @Operation(summary = "Cria um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
@@ -38,6 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Loga um usuário no sistema, obtendo um token")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
         @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
@@ -50,6 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-login")
+    @Operation(summary = "Renova o token de um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
