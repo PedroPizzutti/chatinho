@@ -1,6 +1,5 @@
 package br.com.pizzutti.chatws.service;
 
-import br.com.pizzutti.chatws.dto.MessageDto;
 import br.com.pizzutti.chatws.model.Message;
 import br.com.pizzutti.chatws.repository.MessageRepository;
 import org.springframework.data.domain.Page;
