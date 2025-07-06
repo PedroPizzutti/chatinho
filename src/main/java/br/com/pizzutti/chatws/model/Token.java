@@ -26,6 +26,6 @@ public class Token {
     @Column(name = "jwt")
     private String jwt;
 
-    @Column(name = "owner")
-    private Long owner;
+    @Column(name = "id_user")
+    private Long idOwner;
 }

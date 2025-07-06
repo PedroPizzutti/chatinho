@@ -22,8 +22,8 @@ public class MessageFacade {
     public Message create(MessageDto messageDto) {
         var message = Message.builder()
                 .createdAt(messageDto.createdAt())
-                .user(messageDto.user())
-                .room(messageDto.room())
+                .idUser(messageDto.idUser())
+                .idRoom(messageDto.idRoom())
                 .type(messageDto.type())
                 .content(messageDto.content())
                 .build();
@@ -48,10 +48,10 @@ public class MessageFacade {
         return MessageDto.builder()
                 .createdAt(message.getCreatedAt())
                 .content(message.getContent())
-                .room(message.getRoom())
-                .user(message.getUser())
+                .idRoom(message.getIdRoom())
+                .idUser(message.getIdUser())
                 .type(message.getType())
-                .nick(this.userService.findById(message.getUser()).getNickname())
+                .nick(this.userService.findById(message.getIdUser()).getNickname())
                 .build();
     }
 }

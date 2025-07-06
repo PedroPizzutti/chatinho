@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatusController {
     @GetMapping
     @Operation(summary = "Verifica o status do serviço")
-    public void status() {
-        ResponseEntity.ok("ON-LINE");
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok("ON-LINE");
     }
 }

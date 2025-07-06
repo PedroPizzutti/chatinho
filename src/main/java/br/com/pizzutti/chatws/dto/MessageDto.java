@@ -1,14 +1,13 @@
 package br.com.pizzutti.chatws.dto;
 
-import br.com.pizzutti.chatws.enums.MessageEnum;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 
 @Builder
 public record MessageDto(
-        Long room,
-        Long user,
+        Long idRoom,
+        Long idUser,
         String nick,
         String content,
         String type,

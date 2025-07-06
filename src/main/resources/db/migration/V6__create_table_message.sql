@@ -3,7 +3,8 @@ create table message (
     created_at datetime not null default current_timestamp,
     content TEXT not null,
     type varchar(20) not null,
-    room bigint(20) not null,
-    user bigint(20) not null,
-    foreign key (user) references user(id) on delete cascade
+    id_room bigint(20) not null,
+    id_user bigint(20) not null,
+    foreign key (id_user) references user(id),
+    foreign key (id_room) references room(id) on delete cascade
 );

@@ -22,9 +22,9 @@ public class Member {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "user")
-    private Long user;
+    @Column(name = "id_user")
+    private Long idUser;
 
-    @Column(name = "room")
-    private Long room;
+    @Column(name = "id_room")
+    private Long idRoom;
 }

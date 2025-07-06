@@ -18,17 +18,15 @@ public class MemberService {
 
     public Member create(Long idRoom, Long idUser) {
         var member = Member.builder()
-                .user(idUser)
-                .room(idRoom)
+                .idUser(idUser)
+                .idRoom(idRoom)
                 .createdAt(TimeComponent.getInstance().now())
                 .build();
         this.memberRepository.saveAndFlush(member);
         return member;
     }
 
-    public List<Member> findByRoom(Long room) {
-        return this.memberRepository.findByRoom(room);
+    public List<Member> findByRoom(Long idRoom) {
+        return this.memberRepository.findByIdRoom(idRoom);
     }
-
-
 }

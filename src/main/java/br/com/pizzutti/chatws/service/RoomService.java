@@ -21,7 +21,7 @@ public class RoomService {
 
     public Room create(RoomInsertDto roomInsertDto, Long owner) {
         var room = Room.builder()
-                .owner(owner)
+                .idOwner(owner)
                 .name(roomInsertDto.name())
                 .createdAt(TimeComponent.getInstance().now())
                 .build();
@@ -32,6 +32,10 @@ public class RoomService {
 
     public List<Room> findAll() {
         return this.roomRepository.findAll();
+    }
+
+    public List<Room> findAllByUser(Long idUser) {
+        return this.roomRepository.findAllByIdUser(idUser);
     }
 
     public Room findById(Long id) {

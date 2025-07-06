@@ -10,13 +10,13 @@ public record RoomDto(
         Long id,
         String name,
         LocalDateTime createdAt,
-        Long owner
+        Long idOwner
 ) {
     public static RoomDto fromRoom(Room room) {
         return RoomDto.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .owner(room.getOwner())
+                .idOwner(room.getIdOwner())
                 .createdAt(room.getCreatedAt())
                 .build();
     }

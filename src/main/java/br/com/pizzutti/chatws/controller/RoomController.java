@@ -40,20 +40,19 @@ public class RoomController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<RoomAggregateDto> create(@RequestBody @Valid RoomInsertDto roomInsertDto) {
-        var user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var room = this.roomFacade.create(roomInsertDto, Long.parseLong(user));
+        var room = this.roomFacade.create(roomInsertDto, this.getIdUserLogged());
         return ResponseEntity.status(201).body(room);
     }
 
     @GetMapping
-    @Operation(summary = "Lista as salas")
+    @Operation(summary = "Lista as salas do usuário logado")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomAggregateDto.class)))),
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<List<RoomDto>> list() {
-        var rooms = this.roomService.findAll().stream().map(RoomDto::fromRoom).toList();
+        var rooms = this.roomFacade.findAllByUser(this.getIdUserLogged());
         return ResponseEntity.ok(rooms);
     }
 
@@ -85,9 +84,7 @@ public class RoomController {
         return ResponseEntity.ok(this.roomFacade.findMessages(id, page, perPage));
     }
 
-
-
-
-
-
+    private Long getIdUserLogged() {
+        return Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
 }

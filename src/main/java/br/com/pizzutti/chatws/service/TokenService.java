@@ -132,7 +132,7 @@ public class TokenService {
 
     private void saveRefreshToken(UserDto userDto, String refreshToken) {
         var token = Token.builder()
-                .owner(userDto.id())
+                .idOwner(userDto.id())
                 .createdAt(TimeComponent.getInstance().now())
                 .jwt(refreshToken)
                 .build();

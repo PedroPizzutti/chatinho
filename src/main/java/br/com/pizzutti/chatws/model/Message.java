@@ -27,9 +27,9 @@ public class Message {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "room")
-    private Long room;
+    @Column(name = "id_room")
+    private Long idRoom;
 
-    @Column(name = "user")
-    private Long user;
+    @Column(name = "id_user")
+    private Long idUser;
 }

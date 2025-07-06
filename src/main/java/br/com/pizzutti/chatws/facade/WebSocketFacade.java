@@ -55,7 +55,7 @@ public class WebSocketFacade {
     private void sendMessage(MessageDto messageDto) {
         this.rabbitTemplate.convertAndSend(messageDto);
         var textMessage = this.prepareTextMessage(messageDto);
-        var sessions = this.rooms.get(messageDto.room());
+        var sessions = this.rooms.get(messageDto.idRoom());
         for (WebSocketSession session : sessions) {
             if (!session.isOpen()) continue;
             try {
@@ -76,8 +76,8 @@ public class WebSocketFacade {
 
     private MessageDto prepareMessageDto(WebSocketSession session, String message, MessageEnum type) {
         return MessageDto.builder()
-                .room(this.getRoomFromSession(session))
-                .user(this.getUserFromSession(session))
+                .idRoom(this.getRoomFromSession(session))
+                .idUser(this.getUserFromSession(session))
                 .nick(this.getNickFromSession(session))
                 .type(type.asString())
                 .content(message)

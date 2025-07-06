@@ -22,6 +22,6 @@ public class Room {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "owner")
-    private Long owner;
+    @Column(name = "id_user")
+    private Long idOwner;
 }
