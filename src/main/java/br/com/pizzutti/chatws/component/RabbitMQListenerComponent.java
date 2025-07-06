@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatws.component;
 
+import br.com.pizzutti.chatws.dto.MessageAggregateDto;
 import br.com.pizzutti.chatws.dto.MessageDto;
 import br.com.pizzutti.chatws.service.MessageService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -15,8 +16,8 @@ public class RabbitMQListenerComponent {
     }
 
     @RabbitListener(queues = "ws.messages")
-    public void readMessage(MessageDto messageDto) {
-        this.messageService.create(messageDto);
+    public void readMessage(MessageAggregateDto messageAggregateDto) {
+        this.messageService.create(messageAggregateDto);
     }
 
 }

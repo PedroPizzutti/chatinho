@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 
 @Builder
 public record MessageAggregateDto(
-        RoomDto room,
-        UserDto user,
         String content,
         String type,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        RoomDto room,
+        UserDto user
 ) { }

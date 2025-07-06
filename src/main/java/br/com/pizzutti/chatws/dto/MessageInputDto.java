@@ -4,8 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record MessageInputDto(
-        Long idRoom,
-        Long idUser,
+        RoomDto room,
+        UserDto user,
         String content,
         String type
 ) {}

@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.component.TimeComponent;
+import br.com.pizzutti.chatws.dto.MessageAggregateDto;
 import br.com.pizzutti.chatws.dto.MessageDto;
 import br.com.pizzutti.chatws.dto.MessageInputDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,10 +13,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -43,24 +41,24 @@ public class WebSocketFacade {
     }
 
     public void disconnect(WebSocketSession session, CloseStatus status) {
+        List<Long> roomsToRemove = new ArrayList<>();
         this.sessionRooms.forEach((idRoom, setSession) -> {
-            if (setSession.remove(session)) {
-                if (setSession.isEmpty()) {
-                    this.sessionRooms.remove(idRoom);
-                }
+            if (setSession.remove(session) && setSession.isEmpty()) {
+                roomsToRemove.add(idRoom);
             }
         });
+        roomsToRemove.forEach(sessionRooms::remove);
     }
 
     public void handleMsg(WebSocketSession session, TextMessage message) {
-        var messageDto = this.getMessageDto(message.getPayload());
-        this.propagateMessage(messageDto);
+        var messageAggregateDto = this.getMessageAggregateDto(message.getPayload());
+        this.propagateMessage(messageAggregateDto);
     }
 
-    private void propagateMessage(MessageDto messageDto) {
-        this.rabbitTemplate.convertAndSend(messageDto);
-        var textMessage = this.prepareTextMessage(messageDto);
-        var sessions = this.sessionRooms.get(messageDto.idRoom());
+    private void propagateMessage(MessageAggregateDto messageAggregateDto) {
+        this.rabbitTemplate.convertAndSend(messageAggregateDto);
+        var textMessage = this.prepareTextMessage(messageAggregateDto);
+        var sessions = this.sessionRooms.get(messageAggregateDto.room().id());
         for (WebSocketSession session : sessions) {
             if (!session.isOpen()) continue;
             try {
@@ -71,22 +69,22 @@ public class WebSocketFacade {
         }
     }
 
-    private TextMessage prepareTextMessage(MessageDto messageDto) {
+    private TextMessage prepareTextMessage(MessageAggregateDto messageAggregateDto) {
         try {
-            return new TextMessage(objectMapper.writeValueAsString(messageDto));
+            return new TextMessage(objectMapper.writeValueAsString(messageAggregateDto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private MessageDto getMessageDto(String payload) {
+    private MessageAggregateDto getMessageAggregateDto(String payload) {
         try {
             var messageInputDto = objectMapper.readValue(payload, MessageInputDto.class);
-            return MessageDto.builder()
+            return MessageAggregateDto.builder()
                     .createdAt(TimeComponent.getInstance().now())
                     .type(messageInputDto.type())
-                    .idRoom(messageInputDto.idRoom())
-                    .idUser(messageInputDto.idUser())
+                    .room(messageInputDto.room())
+                    .user(messageInputDto.user())
                     .content(messageInputDto.content())
                     .build();
         } catch (JsonProcessingException e) {

@@ -1,6 +1,6 @@
 package br.com.pizzutti.chatws.service;
 
-import br.com.pizzutti.chatws.dto.MessageDto;
+import br.com.pizzutti.chatws.dto.MessageAggregateDto;
 import br.com.pizzutti.chatws.model.Message;
 import br.com.pizzutti.chatws.repository.MessageRepository;
 import org.springframework.data.domain.Page;
@@ -17,13 +17,13 @@ public class MessageService {
         this.messageRepository = messageRepository;
     }
 
-    public Message create(MessageDto messageDto) {
+    public Message create(MessageAggregateDto messageAggregateDto) {
         var message = Message.builder()
-                .createdAt(messageDto.createdAt())
-                .idUser(messageDto.idUser())
-                .idRoom(messageDto.idRoom())
-                .type(messageDto.type())
-                .content(messageDto.content())
+                .createdAt(messageAggregateDto.createdAt())
+                .idUser(messageAggregateDto.user().id())
+                .idRoom(messageAggregateDto.room().id())
+                .type(messageAggregateDto.type())
+                .content(messageAggregateDto.content())
                 .build();
         return this.messageRepository.saveAndFlush(message);
     }
