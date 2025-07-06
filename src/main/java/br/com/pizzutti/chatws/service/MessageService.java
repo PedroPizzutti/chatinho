@@ -1,9 +1,9 @@
 package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.dto.MessageDto;
-import br.com.pizzutti.chatws.dto.MessagePageDto;
 import br.com.pizzutti.chatws.model.Message;
 import br.com.pizzutti.chatws.repository.MessageRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -28,17 +28,8 @@ public class MessageService {
         return this.messageRepository.saveAndFlush(message);
     }
 
-    public MessagePageDto findLatestByIdRoom(Long idRoom, Integer page, Integer perPage) {
+    public Page<Message> findLatestByIdRoom(Long idRoom, Integer page, Integer perPage) {
         var pageable = PageRequest.of(page - 1, perPage, Sort.by(Sort.Direction.DESC, "createdAt"));
-        var pageMessages = this.messageRepository.findByIdRoom(idRoom, pageable);
-        return MessagePageDto
-                .builder()
-                .data(pageMessages.getContent().stream().map(MessageDto::fromMessage).toList())
-                .page(pageMessages.getNumber() + 1)
-                .perPage(pageMessages.getSize())
-                .totalPages(pageMessages.getTotalPages())
-                .records(pageMessages.getNumberOfElements())
-                .totalRecords(pageMessages.getTotalElements())
-                .build();
+        return this.messageRepository.findByIdRoom(idRoom, pageable);
     }
 }

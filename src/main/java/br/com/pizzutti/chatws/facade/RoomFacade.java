@@ -1,10 +1,13 @@
 package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.dto.*;
+import br.com.pizzutti.chatws.model.Message;
+import br.com.pizzutti.chatws.model.Room;
 import br.com.pizzutti.chatws.service.MemberService;
 import br.com.pizzutti.chatws.service.MessageService;
 import br.com.pizzutti.chatws.service.RoomService;
 import br.com.pizzutti.chatws.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +66,32 @@ public class RoomFacade {
                 .build();
     }
 
-    public MessagePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
-        return this.messageService.findLatestByIdRoom(idRoom, page, perPage);
+    public MessageAggregatePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
+        var room = this.roomService.findById(idRoom);
+        var pageableMessages = this.messageService.findLatestByIdRoom(idRoom, page, perPage);
+        return MessageAggregatePageDto
+                .builder()
+                .data(this.getListMessageAggregateDto(pageableMessages, room))
+                .page(pageableMessages.getNumber() + 1)
+                .perPage(pageableMessages.getSize())
+                .totalPages(pageableMessages.getTotalPages())
+                .records(pageableMessages.getNumberOfElements())
+                .totalRecords(pageableMessages.getTotalElements())
+                .build();
+    }
+
+    private List<MessageAggregateDto> getListMessageAggregateDto(Page<Message> pageableMessages, Room room) {
+        return pageableMessages.getContent()
+                .stream()
+                .map(message -> {
+                    return MessageAggregateDto.builder()
+                            .room(RoomDto.fromRoom(room))
+                            .user(UserDto.fromUser(this.userService.findById(message.getIdUser())))
+                            .content(message.getContent())
+                            .type(message.getType())
+                            .createdAt(message.getCreatedAt())
+                            .build();
+                })
+                .toList();
     }
 }

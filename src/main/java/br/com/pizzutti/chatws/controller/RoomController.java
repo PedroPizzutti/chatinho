@@ -69,11 +69,11 @@ public class RoomController {
     @GetMapping("/{id}/message")
     @Operation(summary = "Obtém as mensagens de uma sala (listadas e ordenadas pelas últimas)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessagePageDto.class))),
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageAggregatePageDto.class))),
             @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<MessagePageDto> listMessages(
+    public ResponseEntity<MessageAggregatePageDto> listMessages(
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "20") Integer perPage,
             @PathVariable Long id
