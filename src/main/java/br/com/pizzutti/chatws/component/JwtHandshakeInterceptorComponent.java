@@ -13,10 +13,10 @@ import java.util.Map;
 @Component
 public class JwtHandshakeInterceptorComponent implements HandshakeInterceptor {
 
-    private final UserFacade userServiceFacade;
+    private final UserFacade userFacade;
 
     public JwtHandshakeInterceptorComponent(UserFacade userFacade) {
-        this.userServiceFacade = userFacade;
+        this.userFacade = userFacade;
     }
 
     @Override
@@ -26,10 +26,8 @@ public class JwtHandshakeInterceptorComponent implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
         var httpServletRequest = servletRequest.getServletRequest();
-        var user = this.userServiceFacade.loginWebSocket(httpServletRequest.getParameter("token"));
+        var user = this.userFacade.loginWebSocket(httpServletRequest.getParameter("token"));
         attributes.put("user", user.getId().toString());
-        attributes.put("nick", user.getNickname());
-        attributes.put("room", "1");
         return true;
     }
 

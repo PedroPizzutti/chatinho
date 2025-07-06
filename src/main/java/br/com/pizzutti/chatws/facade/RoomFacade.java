@@ -2,6 +2,7 @@ package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.dto.*;
 import br.com.pizzutti.chatws.service.MemberService;
+import br.com.pizzutti.chatws.service.MessageService;
 import br.com.pizzutti.chatws.service.RoomService;
 import br.com.pizzutti.chatws.service.UserService;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,16 @@ public class RoomFacade {
     private final RoomService roomService;
     private final MemberService memberService;
     private final UserService userService;
-    private final MessageFacade messageFacade;
+    private final MessageService messageService;
 
     public RoomFacade(RoomService roomService,
                       MemberService memberService,
                       UserService userService,
-                      MessageFacade messageFacade) {
+                      MessageService messageService) {
         this.roomService = roomService;
         this.memberService = memberService;
         this.userService = userService;
-        this.messageFacade = messageFacade;
+        this.messageService = messageService;
     }
 
     @Transactional
@@ -63,8 +64,6 @@ public class RoomFacade {
     }
 
     public MessagePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
-        return this.messageFacade.findLatest(page, perPage);
+        return this.messageService.findAllLatest(page, perPage);
     }
-
-
 }

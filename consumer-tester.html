@@ -25,12 +25,12 @@
     const messageInput = document.getElementById('message');
     const sendBtn = document.getElementById('sendBtn');
     const token = prompt("Insira o token!");
+    const room = prompt("Insira a sala");
 
-    // Ajuste o endereço conforme onde seu backend está rodando
     const socket = new WebSocket(`ws://localhost:14500/v1/ws/chat?token=${token}`);
 
     socket.onopen = () => {
-        fetch('http://localhost:14500/v1/message/latest',{
+        fetch(`http://localhost:14500/v1/room/${room}/message`,{
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token

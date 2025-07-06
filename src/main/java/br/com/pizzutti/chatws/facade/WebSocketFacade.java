@@ -1,8 +1,8 @@
 package br.com.pizzutti.chatws.facade;
 
-import br.com.pizzutti.chatws.dto.MessageDto;
 import br.com.pizzutti.chatws.component.TimeComponent;
-import br.com.pizzutti.chatws.enums.MessageEnum;
+import br.com.pizzutti.chatws.dto.MessageDto;
+import br.com.pizzutti.chatws.dto.MessageInputDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -21,80 +21,80 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class WebSocketFacade {
 
-    private final ObjectMapper mapper;
+    private final ObjectMapper objectMapper;
     private final RabbitTemplate rabbitTemplate;
-    private final Map<Long, Set<WebSocketSession>> rooms;
+    private final Map<Long, Set<WebSocketSession>> sessionRooms;
+    private final RoomFacade roomFacade;
 
-    public WebSocketFacade(ObjectMapper mapper,
-                           RabbitTemplate rabbitTemplate) {
-        this.mapper = mapper;
+    public WebSocketFacade(ObjectMapper objectMapper,
+                           RabbitTemplate rabbitTemplate,
+                           RoomFacade roomFacade) {
+        this.objectMapper = objectMapper;
         this.rabbitTemplate = rabbitTemplate;
-        this.rooms = new ConcurrentHashMap<>();
+        this.sessionRooms = new ConcurrentHashMap<>();
+        this.roomFacade = roomFacade;
     }
 
     public void connect(WebSocketSession session) {
-        var roomId = this.getRoomFromSession(session);
-        this.rooms.computeIfAbsent(roomId, r -> Collections.synchronizedSet(new HashSet<>())).add(session);
-        this.sendMessage(this.prepareMessageDto(session, "", MessageEnum.LOG_IN));
+        var userRooms = this.roomFacade.findAllByUser(this.getUserFromSession(session));
+        userRooms.forEach(userRoom -> {
+            this.sessionRooms.computeIfAbsent(userRoom.id(), r -> Collections.synchronizedSet(new HashSet<>())).add(session);
+        });
     }
 
     public void disconnect(WebSocketSession session, CloseStatus status) {
-        var roomId = this.getRoomFromSession(session);
-        var sessions = this.rooms.get(roomId);
-        this.sendMessage(this.prepareMessageDto(session, "", MessageEnum.LOG_OUT));
-        sessions.remove(session);
-        if (sessions.isEmpty()) {
-            this.rooms.remove(roomId);
-        };
+        this.sessionRooms.forEach((idRoom, setSession) -> {
+            if (setSession.remove(session)) {
+                if (setSession.isEmpty()) {
+                    this.sessionRooms.remove(idRoom);
+                }
+            }
+        });
     }
 
     public void handleMsg(WebSocketSession session, TextMessage message) {
-        this.sendMessage(this.prepareMessageDto(session, message.getPayload(), MessageEnum.MSG));
+        var messageDto = this.getMessageDto(message.getPayload());
+        this.propagateMessage(messageDto);
     }
 
-    private void sendMessage(MessageDto messageDto) {
+    private void propagateMessage(MessageDto messageDto) {
         this.rabbitTemplate.convertAndSend(messageDto);
         var textMessage = this.prepareTextMessage(messageDto);
-        var sessions = this.rooms.get(messageDto.idRoom());
+        var sessions = this.sessionRooms.get(messageDto.idRoom());
         for (WebSocketSession session : sessions) {
             if (!session.isOpen()) continue;
             try {
                 session.sendMessage(textMessage);
             } catch (IOException e) {
-                throw new RuntimeException("Erro ao enviar msg: " + e.getMessage());
+                System.err.println("Falha ao enviar mensagem para sessão " + session.getId());
             }
         }
     }
 
     private TextMessage prepareTextMessage(MessageDto messageDto) {
         try {
-            return new TextMessage(mapper.writeValueAsString(messageDto));
+            return new TextMessage(objectMapper.writeValueAsString(messageDto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private MessageDto prepareMessageDto(WebSocketSession session, String message, MessageEnum type) {
-        return MessageDto.builder()
-                .idRoom(this.getRoomFromSession(session))
-                .idUser(this.getUserFromSession(session))
-                .nick(this.getNickFromSession(session))
-                .type(type.asString())
-                .content(message)
-                .createdAt(TimeComponent.getInstance().now())
-                .build();
+    private MessageDto getMessageDto(String payload) {
+        try {
+            var messageInputDto = objectMapper.readValue(payload, MessageInputDto.class);
+            return MessageDto.builder()
+                    .createdAt(TimeComponent.getInstance().now())
+                    .type(messageInputDto.type())
+                    .idRoom(messageInputDto.idRoom())
+                    .idUser(messageInputDto.idUser())
+                    .content(messageInputDto.content())
+                    .build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Long getUserFromSession(WebSocketSession session) {
         return Long.parseLong((String) session.getAttributes().get("user"));
     }
-
-    private String getNickFromSession(WebSocketSession session) {
-        return (String) session.getAttributes().get("nick");
-    }
-
-    private Long getRoomFromSession(WebSocketSession session) {
-        return Long.parseLong((String) session.getAttributes().get("room"));
-    }
-
 }
