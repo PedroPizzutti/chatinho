@@ -23,12 +23,9 @@ import java.util.List;
 public class RoomController {
 
     private final RoomFacade roomFacade;
-    private final RoomService roomService;
 
-    public RoomController(RoomFacade roomFacade,
-                          RoomService roomService) {
+    public RoomController(RoomFacade roomFacade) {
         this.roomFacade = roomFacade;
-        this.roomService = roomService;
     }
 
     @PostMapping

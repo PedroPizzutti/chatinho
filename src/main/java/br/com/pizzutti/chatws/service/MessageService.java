@@ -28,9 +28,9 @@ public class MessageService {
         return this.messageRepository.saveAndFlush(message);
     }
 
-    public MessagePageDto findAllLatest(Integer page, Integer perPage) {
+    public MessagePageDto findLatestByIdRoom(Long idRoom, Integer page, Integer perPage) {
         var pageable = PageRequest.of(page - 1, perPage, Sort.by(Sort.Direction.DESC, "createdAt"));
-        var pageMessages = this.messageRepository.findAll(pageable);
+        var pageMessages = this.messageRepository.findByIdRoom(idRoom, pageable);
         return MessagePageDto
                 .builder()
                 .data(pageMessages.getContent().stream().map(MessageDto::fromMessage).toList())

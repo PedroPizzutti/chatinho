@@ -64,6 +64,6 @@ public class RoomFacade {
     }
 
     public MessagePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
-        return this.messageService.findAllLatest(page, perPage);
+        return this.messageService.findLatestByIdRoom(idRoom, page, perPage);
     }
 }
