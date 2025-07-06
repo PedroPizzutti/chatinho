@@ -40,7 +40,7 @@ public class TokenService {
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .expiresAt(TimeComponent.getInstance().now().minusSeconds(expiration))
+                .expiresAt(TimeComponent.getInstance().now().plusSeconds(expiration))
                 .tokenType("Bearer")
                 .build();
     }
