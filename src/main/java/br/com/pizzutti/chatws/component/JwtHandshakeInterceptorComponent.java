@@ -1,6 +1,6 @@
 package br.com.pizzutti.chatws.component;
 
-import br.com.pizzutti.chatws.facade.UserFacade;
+import br.com.pizzutti.chatws.facade.AuthFacade;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -13,10 +13,10 @@ import java.util.Map;
 @Component
 public class JwtHandshakeInterceptorComponent implements HandshakeInterceptor {
 
-    private final UserFacade userFacade;
+    private final AuthFacade authFacade;
 
-    public JwtHandshakeInterceptorComponent(UserFacade userFacade) {
-        this.userFacade = userFacade;
+    public JwtHandshakeInterceptorComponent(AuthFacade authFacade) {
+        this.authFacade = authFacade;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class JwtHandshakeInterceptorComponent implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
         var httpServletRequest = servletRequest.getServletRequest();
-        var user = this.userFacade.loginWebSocket(httpServletRequest.getParameter("token"));
+        var user = this.authFacade.loginWebSocket(httpServletRequest.getParameter("token"));
         attributes.put("user", user.getId().toString());
         return true;
     }

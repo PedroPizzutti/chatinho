@@ -1,8 +1,7 @@
 package br.com.pizzutti.chatws.facade;
 
-import br.com.pizzutti.chatws.dto.*;
-import br.com.pizzutti.chatws.model.User;
-import br.com.pizzutti.chatws.service.TokenService;
+import br.com.pizzutti.chatws.dto.UserDto;
+import br.com.pizzutti.chatws.dto.UserInputDto;
 import br.com.pizzutti.chatws.service.TotemService;
 import br.com.pizzutti.chatws.service.UserService;
 import org.springframework.stereotype.Service;
@@ -12,36 +11,16 @@ public class UserFacade {
 
     private final UserService userService;
     private final TotemService totemService;
-    private final TokenService tokenService;
 
-    public UserFacade(UserService userService, TotemService totemService, TokenService tokenService) {
-        this.userService  = userService;
+    public UserFacade(UserService userService,
+                      TotemService totemService) {
+        this.userService = userService;
         this.totemService = totemService;
-        this.tokenService = tokenService;
-    }
-
-    public UserTokenDto loginApi(LoginDto loginDto) {
-        var userCreatedDto = this.userService.login(loginDto);
-        var tokenDto = this.tokenService.generateToken(userCreatedDto);
-        return UserTokenDto.builder()
-                .user(userCreatedDto)
-                .token(tokenDto)
-                .build();
-    }
-
-    public TokenDto refreshLoginApi(RefreshTokenDto refreshTokenDto) {
-        var userId = this.tokenService.validateRefreshToken(refreshTokenDto.jwt());
-        var user = this.userService.findById(Long.parseLong(userId));
-        return this.tokenService.generateToken(UserDto.fromUser(user));
-    }
-
-    public User loginWebSocket(String token) {
-        var userId = this.tokenService.validateAccessToken(token);
-        return this.userService.findById(Long.parseLong(userId));
     }
 
     public UserDto createUser(UserInputDto userInputDto) {
         this.totemService.burn(userInputDto.totem());
         return this.userService.create(userInputDto);
     }
+
 }

@@ -1,14 +1,13 @@
 package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.*;
-import br.com.pizzutti.chatws.facade.UserFacade;
+import br.com.pizzutti.chatws.facade.AuthFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,23 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/auth")
 public class AuthController {
 
-    private final UserFacade userFacade;
+    private final AuthFacade authFacade;
 
-    public AuthController(UserFacade userFacade) {
-        this.userFacade = userFacade;
-    }
-
-    @PostMapping("/create-user")
-    @Operation(summary = "Cria um usuário")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
-    })
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserInputDto userInputDto) {
-        var user = this.userFacade.createUser(userInputDto);
-        return ResponseEntity.status(201).body(user);
+    public AuthController(AuthFacade authFacade) {
+        this.authFacade = authFacade;
     }
 
     @PostMapping("/login")
@@ -48,20 +34,20 @@ public class AuthController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<UserTokenDto> login(@RequestBody LoginDto loginDto) {
-        var userLoggedDto = this.userFacade.loginApi(loginDto);
-        return ResponseEntity.status(201).body(userLoggedDto);
+        var userTokenDto = this.authFacade.loginApi(loginDto);
+        return ResponseEntity.status(201).body(userTokenDto);
     }
 
     @PostMapping("/refresh-login")
     @Operation(summary = "Renova o token de um usuário")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
+        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<TokenDto> refreshLogin(@RequestBody RefreshTokenDto refreshTokenDto) {
-        var userLoggedDto = this.userFacade.refreshLoginApi(refreshTokenDto);
-        return ResponseEntity.status(201).body(userLoggedDto);
+        var tokenDto = this.authFacade.refreshLoginApi(refreshTokenDto);
+        return ResponseEntity.status(201).body(tokenDto);
     }
 }
