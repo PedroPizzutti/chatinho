@@ -3,6 +3,7 @@ package br.com.pizzutti.chatws.controller;
 import br.com.pizzutti.chatws.dto.AdviceDto;
 import br.com.pizzutti.chatws.dto.UserDto;
 import br.com.pizzutti.chatws.dto.UserInputDto;
+import br.com.pizzutti.chatws.enums.FilterOperationEnum;
 import br.com.pizzutti.chatws.facade.UserFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -49,7 +50,17 @@ public class UserController {
             @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<List<UserDto>> listUsers() {
-        return ResponseEntity.ok(null);
+    public ResponseEntity<List<UserDto>> listUsers(
+            @RequestParam(value = "nick", required = false) String nick,
+            @RequestParam(value = "login", required = false) String login
+    ) {
+        var users = this.userFacade.userService()
+                .filter("nickname", nick, FilterOperationEnum.LIKE)
+                .filter("login", login, FilterOperationEnum.LIKE)
+                .find()
+                .stream()
+                .map(UserDto::fromUser)
+                .toList();
+        return ResponseEntity.ok(users);
     }
 }

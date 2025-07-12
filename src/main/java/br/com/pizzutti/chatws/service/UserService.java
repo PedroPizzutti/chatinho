@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 public class UserService extends FilterService<User> {
 
@@ -41,13 +43,6 @@ public class UserService extends FilterService<User> {
         return UserDto.fromUser(user);
     }
 
-    public User findByLogin(String login) {
-        var spec = super.reset().filter("login", login, FilterOperationEnum.EQUAL).specification();
-        return this.userRepository
-                .findOne(spec)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuário não encontrado!"));
-    }
-
     public User findById(Long id) {
         return this.userRepository
                 .findById(id)
@@ -65,5 +60,13 @@ public class UserService extends FilterService<User> {
         }
 
         return UserDto.fromUser(user);
+    }
+
+    public List<User> find() {
+        try {
+            return this.userRepository.findAll(super.specification());
+        } finally {
+            super.reset();
+        }
     }
 }

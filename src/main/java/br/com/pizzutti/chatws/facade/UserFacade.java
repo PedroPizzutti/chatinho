@@ -23,4 +23,8 @@ public class UserFacade {
         return this.userService.create(userInputDto);
     }
 
+    public UserService userService() {
+        return this.userService;
+    }
+
 }
