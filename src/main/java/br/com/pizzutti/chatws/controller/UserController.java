@@ -28,7 +28,7 @@ public class UserController {
         this.userFacade = userFacade;
     }
 
-    @PostMapping
+    @PostMapping("new")
     @Operation(summary = "Cria um usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class))),
