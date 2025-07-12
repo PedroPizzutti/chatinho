@@ -5,6 +5,8 @@ import br.com.pizzutti.chatws.enums.FilterOperationEnum;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Collection;
+
 public class FilterService<T> {
 
     private Specification<T> specification;
@@ -23,14 +25,31 @@ public class FilterService<T> {
         switch (operation) {
             case EQUAL -> this.specification =
                     this.specification.and(
-                            (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(property), value)
+                        (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(property), value)
                     );
             case LIKE -> this.specification =
                     this.specification.and(
                             (root, query, criteriaBuilder) -> criteriaBuilder.like(
-                                    criteriaBuilder.upper(root.get(property)), value.toString().toUpperCase() + "%"
+                                criteriaBuilder.upper(root.get(property)), value.toString().toUpperCase() + "%"
                             )
                     );
+            case IN -> {
+                if (value instanceof Collection<?> collection && !collection.isEmpty()) {
+                    this.specification =
+                            this.specification.and(
+                                ((root, query, criteriaBuilder) -> root.get(property).in(collection))
+                            );
+                }
+            }
+            case NOT_IN -> {
+                if (value instanceof Collection<?> collection && !collection.isEmpty()) {
+                    this.specification =
+                            this.specification.and(
+                                (root, query, criteriaBuilder) ->
+                                    criteriaBuilder.not(root.get(property).in(collection))
+                            );
+                }
+            }
         }
         return this;
     }
@@ -44,17 +63,18 @@ public class FilterService<T> {
         return this;
     }
 
-    protected Specification<T> getSpecification() {
+    protected Specification<T> specification() {
         return this.specification;
     }
 
-    protected Sort getSort() {
+    protected Sort sort() {
         return this.sort;
     }
 
-    protected void reset() {
+    protected FilterService<T> reset() {
         this.specification = ((root, query, criteriaBuilder) -> criteriaBuilder.conjunction());
         this.sort = Sort.unsorted();
+        return this;
     }
 
 }

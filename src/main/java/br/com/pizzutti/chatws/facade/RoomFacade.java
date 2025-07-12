@@ -1,6 +1,9 @@
 package br.com.pizzutti.chatws.facade;
 
 import br.com.pizzutti.chatws.dto.*;
+import br.com.pizzutti.chatws.enums.FilterDirectionEnum;
+import br.com.pizzutti.chatws.enums.FilterOperationEnum;
+import br.com.pizzutti.chatws.model.Member;
 import br.com.pizzutti.chatws.model.Message;
 import br.com.pizzutti.chatws.model.Room;
 import br.com.pizzutti.chatws.service.MemberService;
@@ -46,7 +49,10 @@ public class RoomFacade {
     }
 
     public List<RoomDto> findAllByUser(Long idUser) {
-        return this.roomService.findAllByUser(idUser)
+        var members = this.memberService.filter("idUser", idUser, FilterOperationEnum.EQUAL).find();
+        var idRooms = members.stream().map(Member::getIdRoom).toList();
+        return this.roomService.filter("id", idRooms, FilterOperationEnum.IN)
+                .find()
                 .stream()
                 .map(RoomDto::fromRoom)
                 .toList();
@@ -55,7 +61,7 @@ public class RoomFacade {
     public RoomAggregateDto findById(Long idRoom) {
         var room = this.roomService.findById(idRoom);
         var owner = this.userService.findById(room.getIdOwner());
-        var members = this.memberService.findByRoom(room.getId());
+        var members = this.memberService.filter("idRoom", room.getId(), FilterOperationEnum.EQUAL).find();
         var users = members.stream().map(m -> UserDto.fromUser(this.userService.findById(m.getIdUser()))).toList();
         return RoomAggregateDto.builder()
                 .id(room.getId())
@@ -68,7 +74,10 @@ public class RoomFacade {
 
     public MessageAggregatePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
         var room = this.roomService.findById(idRoom);
-        var pageableMessages = this.messageService.findLatestByIdRoom(idRoom, page, perPage);
+        var pageableMessages = this.messageService
+                .filter("idRoom", idRoom, FilterOperationEnum.EQUAL)
+                .orderBy("createdAt", FilterDirectionEnum.DESC)
+                .find(page, perPage);
         return MessageAggregatePageDto
                 .builder()
                 .data(this.getListMessageAggregateDto(pageableMessages, room))

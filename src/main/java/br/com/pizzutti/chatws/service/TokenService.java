@@ -3,6 +3,7 @@ package br.com.pizzutti.chatws.service;
 import br.com.pizzutti.chatws.component.TimeComponent;
 import br.com.pizzutti.chatws.dto.TokenDto;
 import br.com.pizzutti.chatws.dto.UserDto;
+import br.com.pizzutti.chatws.enums.FilterOperationEnum;
 import br.com.pizzutti.chatws.model.Token;
 import br.com.pizzutti.chatws.repository.TokenRepository;
 import org.jose4j.jws.JsonWebSignature;
@@ -19,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Service
-public class TokenService {
+public class TokenService extends FilterService <Token>{
     @Value("${jwt.secret}")
     private String secret;
 
@@ -62,7 +63,8 @@ public class TokenService {
     }
 
     public String validateRefreshToken(String token) {
-        var tokenBd = this.tokenRepository.findByJwt(token)
+        var spec = super.reset().filter("jwt", token, FilterOperationEnum.EQUAL).specification();
+        var tokenBd = this.tokenRepository.findOne(spec)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token inválido!"));
         this.tokenRepository.delete(tokenBd);
 

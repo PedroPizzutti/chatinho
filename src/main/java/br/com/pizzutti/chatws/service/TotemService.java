@@ -1,6 +1,7 @@
 package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.component.TimeComponent;
+import br.com.pizzutti.chatws.enums.FilterOperationEnum;
 import br.com.pizzutti.chatws.model.Totem;
 import br.com.pizzutti.chatws.repository.TotemRepository;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class TotemService {
+public class TotemService extends FilterService<Totem> {
 
     private final TotemRepository totemRepository;
 
@@ -17,8 +18,9 @@ public class TotemService {
     }
 
     private Totem findByGuid(String guid) {
+        var spec = super.reset().filter("guid", guid, FilterOperationEnum.EQUAL).specification();
         return this.totemRepository
-                .findByGuid(guid)
+                .findOne(spec)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem inválido!"));
     }
 

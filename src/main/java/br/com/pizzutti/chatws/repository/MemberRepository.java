@@ -2,10 +2,7 @@ package br.com.pizzutti.chatws.repository;
 
 import br.com.pizzutti.chatws.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.util.List;
-
-public interface MemberRepository extends JpaRepository<Member, Long> {
-    List<Member> findByIdRoom(Long idRoom);
-    List<Member> findByIdUser(Long idUser);
+public interface MemberRepository extends JpaRepository<Member, Long>, JpaSpecificationExecutor<Member> {
 }
