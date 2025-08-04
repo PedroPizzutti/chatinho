@@ -22,6 +22,7 @@ public class UserService extends FilterService<User> {
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder) {
+        super();
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

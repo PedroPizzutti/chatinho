@@ -92,15 +92,13 @@ public class RoomFacade {
     private List<MessageAggregateDto> getListMessageAggregateDto(Page<Message> pageableMessages, Room room) {
         return pageableMessages.getContent()
                 .stream()
-                .map(message -> {
-                    return MessageAggregateDto.builder()
-                            .room(RoomDto.fromRoom(room))
-                            .user(UserDto.fromUser(this.userService.findById(message.getIdUser())))
-                            .content(message.getContent())
-                            .type(message.getType())
-                            .createdAt(message.getCreatedAt())
-                            .build();
-                })
+                .map(message -> MessageAggregateDto.builder()
+                        .room(RoomDto.fromRoom(room))
+                        .user(UserDto.fromUser(this.userService.findById(message.getIdUser())))
+                        .content(message.getContent())
+                        .type(message.getType())
+                        .createdAt(message.getCreatedAt())
+                        .build())
                 .toList();
     }
 }

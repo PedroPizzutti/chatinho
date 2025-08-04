@@ -14,6 +14,7 @@ public class MemberService extends FilterService<Member>{
     private final MemberRepository memberRepository;
 
     public MemberService(MemberRepository memberRepository) {
+        super();
         this.memberRepository = memberRepository;
     }
 

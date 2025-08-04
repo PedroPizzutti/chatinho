@@ -15,6 +15,7 @@ public class MessageService extends FilterService<Message> {
     private final MessageRepository messageRepository;
 
     public MessageService(MessageRepository messageRepository) {
+        super();
         this.messageRepository = messageRepository;
     }
 

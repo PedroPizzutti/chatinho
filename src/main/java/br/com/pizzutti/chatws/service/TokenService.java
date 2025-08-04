@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 @Service
-public class TokenService extends FilterService <Token>{
+public class TokenService extends FilterService<Token> {
     @Value("${jwt.secret}")
     private String secret;
 
@@ -30,6 +30,7 @@ public class TokenService extends FilterService <Token>{
     private final TokenRepository tokenRepository;
 
     public TokenService(TokenRepository tokenRepository) {
+        super();
         this.tokenRepository = tokenRepository;
     }
 

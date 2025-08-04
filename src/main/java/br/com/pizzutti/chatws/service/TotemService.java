@@ -14,6 +14,7 @@ public class TotemService extends FilterService<Totem> {
     private final TotemRepository totemRepository;
 
     public TotemService(TotemRepository totemRepository) {
+        super();
         this.totemRepository = totemRepository;
     }
 

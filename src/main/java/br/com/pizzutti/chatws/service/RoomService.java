@@ -17,6 +17,7 @@ public class RoomService extends FilterService<Room> {
     private final RoomRepository roomRepository;
 
     public RoomService(RoomRepository roomRepository) {
+        super();
         this.roomRepository = roomRepository;
     }
 
@@ -34,10 +35,6 @@ public class RoomService extends FilterService<Room> {
 
         this.roomRepository.saveAndFlush(room);
         return room;
-    }
-
-    public List<Room> findAll() {
-        return this.roomRepository.findAll();
     }
 
     public List<Room> find() {
