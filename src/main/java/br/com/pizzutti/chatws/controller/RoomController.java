@@ -2,7 +2,6 @@ package br.com.pizzutti.chatws.controller;
 
 import br.com.pizzutti.chatws.dto.*;
 import br.com.pizzutti.chatws.facade.RoomFacade;
-import br.com.pizzutti.chatws.service.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,8 +35,8 @@ public class RoomController {
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<RoomAggregateDto> create(@RequestBody @Valid RoomInsertDto roomInsertDto) {
-        var room = this.roomFacade.create(roomInsertDto, this.getIdUserLogged());
+    public ResponseEntity<RoomAggregateDto> create(@RequestBody @Valid RoomInputDto roomInputDto) {
+        var room = this.roomFacade.create(roomInputDto, this.getIdUserLogged());
         return ResponseEntity.status(201).body(room);
     }
 

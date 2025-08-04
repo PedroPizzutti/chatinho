@@ -1,7 +1,7 @@
 package br.com.pizzutti.chatws.service;
 
 import br.com.pizzutti.chatws.component.TimeComponent;
-import br.com.pizzutti.chatws.dto.RoomInsertDto;
+import br.com.pizzutti.chatws.dto.RoomInputDto;
 import br.com.pizzutti.chatws.enums.FilterOperationEnum;
 import br.com.pizzutti.chatws.model.Room;
 import br.com.pizzutti.chatws.repository.RoomRepository;
@@ -25,10 +25,10 @@ public class RoomService extends FilterService<Room> {
         return this;
     }
 
-    public Room create(RoomInsertDto roomInsertDto, Long owner) {
+    public Room create(RoomInputDto roomInputDto, Long owner) {
         var room = Room.builder()
                 .idOwner(owner)
-                .name(roomInsertDto.name())
+                .name(roomInputDto.name())
                 .createdAt(TimeComponent.getInstance().now())
                 .build();
 

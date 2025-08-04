@@ -35,8 +35,8 @@ public class RoomFacade {
     }
 
     @Transactional
-    public RoomAggregateDto create(RoomInsertDto roomInsertDto, Long owner) {
-        var room = this.roomService.create(roomInsertDto, owner);
+    public RoomAggregateDto create(RoomInputDto roomInputDto, Long owner) {
+        var room = this.roomService.create(roomInputDto, owner);
         var member = this.memberService.create(room.getId(), owner);
         var user = this.userService.findById(member.getIdUser());
         return RoomAggregateDto.builder()
