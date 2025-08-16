@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
                                                    JwtAuthFilterComponent jwtAuthFilterComponent) throws Exception {
         httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
                     corsConfig.setAllowedOrigins(List.of("*"));
@@ -31,7 +31,7 @@ public class SecurityConfig {
                     corsConfig.setAllowCredentials(false);
                     return corsConfig;
                 }))
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(req -> req
                         .requestMatchers(PublicRoutesConfig.PATHS.toArray(new String[0]))
                         .permitAll()
                         .anyRequest()
