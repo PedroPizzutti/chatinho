@@ -26,7 +26,7 @@ public class MemberService extends FilterService<Member> {
         var member = Member.builder()
                 .idUser(idUser)
                 .idRoom(idRoom)
-                .createdAt(TimeService.getInstance().now())
+                .createdAt(TimeService.now())
                 .build();
         this.memberRepository.saveAndFlush(member);
         return member;

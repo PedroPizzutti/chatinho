@@ -45,7 +45,7 @@ public class InviteService extends FilterService<Invite> {
 
     public Invite create(InviteInputDto inviteInputDto) {
         var invite = Invite.builder()
-                .createdAt(TimeService.getInstance().now())
+                .createdAt(TimeService.now())
                 .status(InviteStatusEnum.PENDING)
                 .idUserFrom(inviteInputDto.idUserFrom())
                 .idUserTo(inviteInputDto.idUserTo())

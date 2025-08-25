@@ -82,7 +82,7 @@ public class WebSocketFacade {
         try {
             var messageInputDto = objectMapper.readValue(payload, MessageAggregateInputDto.class);
             return MessageAggregateDto.builder()
-                    .createdAt(TimeService.getInstance().now())
+                    .createdAt(TimeService.now())
                     .type(messageInputDto.type())
                     .room(messageInputDto.room())
                     .user(messageInputDto.user())

@@ -22,7 +22,7 @@ public class AdviceController {
     public ResponseEntity<AdviceDto> handleResponseStatusEx(ResponseStatusException ex,
                                                             HttpServletRequest request) {
         var adviceDto = AdviceDto.builder()
-                .timestamp(TimeService.getInstance().now())
+                .timestamp(TimeService.now())
                 .status(ex.getStatusCode().value())
                 .errors(List.of(Objects.requireNonNull(ex.getReason())))
                 .code(AdviceEnum.fromHttpStatus(ex.getStatusCode().value()))
@@ -40,7 +40,7 @@ public class AdviceController {
             errors.add(error.getDefaultMessage());
         });
         var adviceDto = AdviceDto.builder()
-                .timestamp(TimeService.getInstance().now())
+                .timestamp(TimeService.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .errors(errors)
                 .code(AdviceEnum.BAD_REQUEST)
@@ -53,7 +53,7 @@ public class AdviceController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<AdviceDto> handleGenericEx(Exception ex, HttpServletRequest request) {
         var adviceDto = AdviceDto.builder()
-                .timestamp(TimeService.getInstance().now())
+                .timestamp(TimeService.now())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .errors(List.of(ex.getMessage()))
                 .code(AdviceEnum.BAD_REQUEST)

@@ -58,7 +58,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             var adviceDto = AdviceDto.builder()
                     .path(request.getRequestURI())
                     .status(401)
-                    .timestamp(TimeService.getInstance().now())
+                    .timestamp(TimeService.now())
                     .code(AdviceEnum.INVALID_CREDENTIALS)
                     .errors(List.of(e.getLocalizedMessage()))
                     .build();

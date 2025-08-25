@@ -3,20 +3,21 @@ package br.com.pizzutti.chatinho.api.infra.service;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
 public class TimeService {
-    @Getter
-    private static TimeService instance = null;
-    private final TimeRepository timeRepository;
+
+    private static Duration offset;
 
     public TimeService(TimeRepository timeRepository) {
-        this.timeRepository = timeRepository;
-        instance = this;
+        LocalDateTime dbNow = timeRepository.now();
+        LocalDateTime localNow = LocalDateTime.now();
+        offset = Duration.between(localNow, dbNow);
     }
 
-    public LocalDateTime now() {
-        return this.timeRepository.now();
+    public static LocalDateTime now() {
+        return LocalDateTime.now().plus(offset);
     }
 }

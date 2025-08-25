@@ -36,7 +36,7 @@ public class TotemService extends FilterService<Totem> {
     }
 
     private void validateIsExpired(Totem totem) {
-        if (TimeService.getInstance().now().isAfter((totem.getCreatedAt().plusHours(totem.getExpiresIn())))) {
+        if (TimeService.now().isAfter((totem.getCreatedAt().plusHours(totem.getExpiresIn())))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem expirado!");
         }
     }

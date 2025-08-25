@@ -28,7 +28,7 @@ public class RoomService extends FilterService<Room> {
         var room = Room.builder()
                 .idOwner(owner)
                 .name(roomInputDto.name())
-                .createdAt(TimeService.getInstance().now())
+                .createdAt(TimeService.now())
                 .build();
 
         this.roomRepository.saveAndFlush(room);

@@ -27,10 +27,10 @@
     const token = prompt("Insira o token!");
     const room = prompt("Insira a sala");
 
-    const socket = new WebSocket(`ws://localhost:14500/v1/ws/chat?token=${token}`);
+    const socket = new WebSocket(`ws://pizzutti-sahao-phd.shop/v1/ws/chat?token=${token}`);
 
     socket.onopen = () => {
-        fetch(`http://localhost:14500/v1/room/${room}/message`,{
+        fetch(`https://pizzutti-sahao-phd.shop/v1/room/${room}/message`,{
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + token

@@ -34,7 +34,7 @@ public class UserService extends FilterService<User> {
                 .login(userInputDto.login())
                 .nickname(userInputDto.nickname())
                 .password(passwordEncoder.encode(userInputDto.password()))
-                .createdAt(TimeService.getInstance().now())
+                .createdAt(TimeService.now())
                 .build();
 
         this.userRepository.saveAndFlush(user);

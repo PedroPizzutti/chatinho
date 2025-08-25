@@ -40,7 +40,7 @@ public class TokenService extends FilterService<Token> {
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .expiresAt(TimeService.getInstance().now().plusSeconds(expiration))
+                .expiresAt(TimeService.now().plusSeconds(expiration))
                 .tokenType("Bearer")
                 .build();
     }
@@ -134,7 +134,7 @@ public class TokenService extends FilterService<Token> {
     private void saveRefreshToken(UserDto userDto, String refreshToken) {
         var token = Token.builder()
                 .idOwner(userDto.id())
-                .createdAt(TimeService.getInstance().now())
+                .createdAt(TimeService.now())
                 .jwt(refreshToken)
                 .build();
         this.tokenRepository.save(token);
