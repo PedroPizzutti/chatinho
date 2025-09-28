@@ -5,6 +5,9 @@ import br.com.pizzutti.chatinho.api.domain.auth.LoginDto;
 import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
 import br.com.pizzutti.chatinho.api.infra.service.FilterService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-public class UserService extends FilterService<User> {
+public class UserService extends FilterService<User> implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -27,6 +30,14 @@ public class UserService extends FilterService<User> {
     public <U> UserService filter(String property, U value, FilterOperationEnum operation) {
         super.filter(property, value, operation);
         return this;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var spec = super.reset().filter("login", username, FilterOperationEnum.EQUAL).specification();
+        return this.userRepository
+                .findOne(spec)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
     }
 
     public UserDto create(UserInputDto userInputDto) {

@@ -1,5 +1,6 @@
 package br.com.pizzutti.chatinho.api.infra.config.security;
 
+import br.com.pizzutti.chatinho.api.domain.user.UserService;
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceEnum;
 import br.com.pizzutti.chatinho.api.domain.token.TokenService;
@@ -23,11 +24,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final AntPathMatcher matcher;
     private final TokenService tokenService;
+    private final UserService userService;
     private final ObjectMapper mapper;
 
     public JwtAuthFilter(TokenService tokenService,
+                         UserService userService,
                          ObjectMapper mapper) {
         this.tokenService = tokenService;
+        this.userService = userService;
         this.mapper = mapper;
         this.matcher = new AntPathMatcher();
     }
@@ -50,8 +54,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
         try {
-            var user = tokenService.validateAccessToken(token);
-            var auth = new UsernamePasswordAuthenticationToken(user, null, List.of());
+            var idUser = tokenService.validateAccessToken(token);
+            var user = this.userService.findById(Long.parseLong(idUser));
+            var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
             filterChain.doFilter(request, response);
         } catch (Exception e) {

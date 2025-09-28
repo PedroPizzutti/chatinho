@@ -26,9 +26,17 @@ public class WebSocketHandshake implements HandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
         if (!(request instanceof ServletServerHttpRequest servletRequest)) return false;
         var httpServletRequest = servletRequest.getServletRequest();
-        var user = this.authFacade.loginWebSocket(httpServletRequest.getParameter("token"));
-        attributes.put("user", user.getId().toString());
-        return true;
+        var token = httpServletRequest.getParameter("token");
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+        try {
+            var user = this.authFacade.loginWebSocket(token);
+            attributes.put("user", user.getId().toString());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
