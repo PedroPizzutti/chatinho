@@ -5,6 +5,7 @@ import br.com.pizzutti.chatinho.api.domain.room.RoomAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomInputDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomFacade;
+import br.com.pizzutti.chatinho.api.domain.user.User;
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -85,6 +86,7 @@ public class RoomController {
     }
 
     private Long getIdUserLogged() {
-        return Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getId();
     }
 }
