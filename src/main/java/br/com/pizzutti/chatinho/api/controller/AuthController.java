@@ -38,8 +38,7 @@ public class AuthController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<UserTokenDto> login(@RequestBody LoginDto loginDto) {
-        var userTokenDto = this.authFacade.loginApi(loginDto);
-        return ResponseEntity.status(201).body(userTokenDto);
+        return ResponseEntity.status(201).body(this.authFacade.loginApi(loginDto));
     }
 
     @PostMapping("/refresh-login")
@@ -51,7 +50,6 @@ public class AuthController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<TokenDto> refreshLogin(@RequestBody RefreshTokenDto refreshTokenDto) {
-        var tokenDto = this.authFacade.refreshLoginApi(refreshTokenDto);
-        return ResponseEntity.status(201).body(tokenDto);
+        return ResponseEntity.status(201).body(this.authFacade.refreshLoginApi(refreshTokenDto));
     }
 }

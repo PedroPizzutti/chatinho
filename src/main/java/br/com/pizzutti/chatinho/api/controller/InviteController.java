@@ -40,8 +40,7 @@ public class InviteController {
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<InviteAggregateDto> create(@RequestBody @Valid InviteInputDto inviteInputDto) {
-        var invite = inviteFacade.create(inviteInputDto);
-        return ResponseEntity.status(201).body(invite);
+        return ResponseEntity.status(201).body(this.inviteFacade.create(inviteInputDto));
     }
 
     @PatchMapping("{id}/accept")
@@ -53,8 +52,7 @@ public class InviteController {
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<InviteAggregateDto> accept(@PathVariable Long id) {
-        var invite = inviteFacade.accept(id);
-        return ResponseEntity.status(202).body(invite);
+        return ResponseEntity.status(202).body(this.inviteFacade.accept(id));
     }
 
     @PatchMapping("{id}/reject")
@@ -66,8 +64,7 @@ public class InviteController {
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<InviteAggregateDto> reject(@PathVariable Long id) {
-        var invite = inviteFacade.reject(id);
-        return ResponseEntity.status(202).body(invite);
+        return ResponseEntity.status(202).body(this.inviteFacade.reject(id));
     }
 
     @GetMapping
@@ -83,12 +80,6 @@ public class InviteController {
             @RequestParam(required = false) Long idRoom,
             @RequestParam(required = false) InviteStatusEnum status
     ) {
-        var listInvite = this.inviteFacade
-                .filter("status", Objects.isNull(status) ? null : status.toString(), FilterOperationEnum.EQUAL)
-                .filter("idUserFrom", idUserFrom, FilterOperationEnum.EQUAL)
-                .filter("idUserTo", idUserTo, FilterOperationEnum.EQUAL)
-                .filter("idRoom", idRoom, FilterOperationEnum.EQUAL)
-                .list();
-        return ResponseEntity.ok(listInvite);
+        return ResponseEntity.ok(this.inviteFacade.listInvite(idUserFrom, idUserTo, idRoom, status));
     }
 }

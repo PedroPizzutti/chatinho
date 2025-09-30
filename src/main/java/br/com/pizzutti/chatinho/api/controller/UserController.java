@@ -38,8 +38,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserInputDto userInputDto) {
-        var user = this.userFacade.createUser(userInputDto);
-        return ResponseEntity.status(201).body(user);
+        return ResponseEntity.status(201).body(this.userFacade.createUser(userInputDto));
     }
 
     @GetMapping
@@ -54,13 +53,6 @@ public class UserController {
             @RequestParam(value = "nick", required = false) String nick,
             @RequestParam(value = "login", required = false) String login
     ) {
-        var users = this.userFacade.userService()
-                .filter("nickname", nick, FilterOperationEnum.LIKE)
-                .filter("login", login, FilterOperationEnum.LIKE)
-                .find()
-                .stream()
-                .map(UserDto::fromUser)
-                .toList();
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(this.userFacade.listUser(nick, login));
     }
 }

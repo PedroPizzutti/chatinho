@@ -1,7 +1,6 @@
 package br.com.pizzutti.chatinho.api.domain.user;
 
 import br.com.pizzutti.chatinho.api.infra.service.TimeService;
-import br.com.pizzutti.chatinho.api.domain.auth.LoginDto;
 import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
 import br.com.pizzutti.chatinho.api.infra.service.FilterService;
 import org.springframework.http.HttpStatus;
@@ -40,35 +39,20 @@ public class UserService extends FilterService<User> implements UserDetailsServi
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
     }
 
-    public UserDto create(UserInputDto userInputDto) {
+    public User create(UserInputDto userInputDto) {
         var user = User.builder()
                 .login(userInputDto.login())
                 .nickname(userInputDto.nickname())
                 .password(passwordEncoder.encode(userInputDto.password()))
                 .createdAt(TimeService.now())
                 .build();
-
-        this.userRepository.saveAndFlush(user);
-        return UserDto.fromUser(user);
+        return this.userRepository.saveAndFlush(user);
     }
 
     public User findById(Long id) {
         return this.userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "usuário não encontrado!"));
-    }
-
-    public UserDto login(LoginDto loginDto) {
-        var spec = super.reset().filter("login", loginDto.login(), FilterOperationEnum.EQUAL).specification();
-        var user = this.userRepository
-                .findOne(spec)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
-
-        if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!");
-        }
-
-        return UserDto.fromUser(user);
     }
 
     public List<User> find() {

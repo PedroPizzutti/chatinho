@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class InviteFacade {
@@ -34,11 +35,6 @@ public class InviteFacade {
     public <U> InviteFacade filter(String property, U value, FilterOperationEnum operation) {
         this.inviteService.filter(property, value, operation);
         return this;
-    }
-
-    public List<InviteAggregateDto> list() {
-        var listInvite = this.inviteService.find();
-        return listInvite.stream().map(this::inviteAggregateDtoFromInvite).toList();
     }
 
     public InviteAggregateDto create(InviteInputDto inviteInputDto) {
@@ -109,4 +105,15 @@ public class InviteFacade {
 
     }
 
+    public List<InviteAggregateDto> listInvite(Long idUserFrom, Long idUserTo, Long idRoom, InviteStatusEnum status) {
+        return this.inviteService
+                .filter("status", Objects.isNull(status) ? null : status.toString(), FilterOperationEnum.EQUAL)
+                .filter("idUserFrom", idUserFrom, FilterOperationEnum.EQUAL)
+                .filter("idUserTo", idUserTo, FilterOperationEnum.EQUAL)
+                .filter("idRoom", idRoom, FilterOperationEnum.EQUAL)
+                .find()
+                .stream()
+                .map(this::inviteAggregateDtoFromInvite)
+                .toList();
+    }
 }

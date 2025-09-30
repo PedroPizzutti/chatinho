@@ -41,8 +41,7 @@ public class RoomController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<RoomAggregateDto> create(@RequestBody @Valid RoomInputDto roomInputDto) {
-        var room = this.roomFacade.create(roomInputDto, this.getIdUserLogged());
-        return ResponseEntity.status(201).body(room);
+        return ResponseEntity.status(201).body(this.roomFacade.create(roomInputDto, this.getIdUserLogged()));
     }
 
     @GetMapping
@@ -53,8 +52,7 @@ public class RoomController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<List<RoomDto>> list() {
-        var rooms = this.roomFacade.findAllByUser(this.getIdUserLogged());
-        return ResponseEntity.ok(rooms);
+        return ResponseEntity.ok(this.roomFacade.findAllByUser(this.getIdUserLogged()));
     }
 
     @GetMapping("/{id}")
@@ -66,8 +64,7 @@ public class RoomController {
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<RoomAggregateDto> findById(@PathVariable Long id) {
-        var room = this.roomFacade.findById(id);
-        return ResponseEntity.ok(room);
+        return ResponseEntity.ok(this.roomFacade.findById(id));
     }
 
     @GetMapping("/{id}/message")
