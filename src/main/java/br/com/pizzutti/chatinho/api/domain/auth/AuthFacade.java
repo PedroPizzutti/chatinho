@@ -1,10 +1,10 @@
 package br.com.pizzutti.chatinho.api.domain.auth;
 
-import br.com.pizzutti.chatinho.api.domain.token.TokenDto;
+import br.com.pizzutti.chatinho.api.domain.token.TokenGetDto;
 import br.com.pizzutti.chatinho.api.domain.user.User;
-import br.com.pizzutti.chatinho.api.domain.user.UserDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
 import br.com.pizzutti.chatinho.api.domain.user.UserService;
-import br.com.pizzutti.chatinho.api.domain.user.UserTokenDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.token.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,21 +25,21 @@ public class AuthFacade {
         this.authenticationManager = authenticationManager;
     }
 
-    public UserTokenDto loginApi(LoginDto loginDto) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.login(), loginDto.password());
+    public UserGetAggregateDto loginApi(LoginPostDto loginPostDto) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(loginPostDto.login(), loginPostDto.password());
         var authentication = authenticationManager.authenticate(authenticationToken);
-        var userCreatedDto = UserDto.fromUser((User) authentication.getPrincipal());
+        var userCreatedDto = UserGetDto.fromUser((User) authentication.getPrincipal());
         var tokenDto = this.tokenService.generateToken(userCreatedDto);
-        return UserTokenDto.builder()
+        return UserGetAggregateDto.builder()
                 .user(userCreatedDto)
                 .token(tokenDto)
                 .build();
     }
 
-    public TokenDto refreshLoginApi(RefreshTokenDto refreshTokenDto) {
-        var userId = this.tokenService.validateRefreshToken(refreshTokenDto.jwt());
+    public TokenGetDto refreshLoginApi(RefreshTokenPostDto refreshTokenPostDto) {
+        var userId = this.tokenService.validateRefreshToken(refreshTokenPostDto.jwt());
         var user = this.userService.findById(Long.parseLong(userId));
-        return this.tokenService.generateToken(UserDto.fromUser(user));
+        return this.tokenService.generateToken(UserGetDto.fromUser(user));
     }
 
     public User loginWebSocket(String token) {

@@ -1,9 +1,8 @@
 package br.com.pizzutti.chatinho.api.controller;
 
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
-import br.com.pizzutti.chatinho.api.domain.user.UserDto;
-import br.com.pizzutti.chatinho.api.domain.user.UserInputDto;
-import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserPostDto;
 import br.com.pizzutti.chatinho.api.domain.user.UserFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,24 +31,24 @@ public class UserController {
     @PostMapping("new")
     @Operation(summary = "Cria um usuário")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserGetDto.class))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserInputDto userInputDto) {
-        return ResponseEntity.status(201).body(this.userFacade.createUser(userInputDto));
+    public ResponseEntity<UserGetDto> createUser(@RequestBody @Valid UserPostDto userPostDto) {
+        return ResponseEntity.status(201).body(this.userFacade.createUser(userPostDto));
     }
 
     @GetMapping
     @Operation(summary = "Lista os usuários")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class)))),
+            @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGetDto.class)))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
             @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<List<UserDto>> listUsers(
+    public ResponseEntity<List<UserGetDto>> listUsers(
             @RequestParam(value = "nick", required = false) String nick,
             @RequestParam(value = "login", required = false) String login
     ) {

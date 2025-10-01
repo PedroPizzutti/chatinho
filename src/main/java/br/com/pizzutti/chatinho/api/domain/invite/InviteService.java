@@ -43,13 +43,13 @@ public class InviteService extends FilterService<Invite> {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Convite não encontrado!"));
     }
 
-    public Invite create(InviteInputDto inviteInputDto) {
+    public Invite create(InvitePostDto invitePostDto) {
         var invite = Invite.builder()
                 .createdAt(TimeService.now())
                 .status(InviteStatusEnum.PENDING)
-                .idUserFrom(inviteInputDto.idUserFrom())
-                .idUserTo(inviteInputDto.idUserTo())
-                .idRoom(inviteInputDto.idRoom())
+                .idUserFrom(invitePostDto.idUserFrom())
+                .idUserTo(invitePostDto.idUserTo())
+                .idRoom(invitePostDto.idRoom())
                 .build();
         return this.inviteRepository.saveAndFlush(invite);
     }

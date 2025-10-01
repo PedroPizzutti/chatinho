@@ -39,11 +39,11 @@ public class UserService extends FilterService<User> implements UserDetailsServi
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
     }
 
-    public User create(UserInputDto userInputDto) {
+    public User create(UserPostDto userPostDto) {
         var user = User.builder()
-                .login(userInputDto.login())
-                .nickname(userInputDto.nickname())
-                .password(passwordEncoder.encode(userInputDto.password()))
+                .login(userPostDto.login())
+                .nickname(userPostDto.nickname())
+                .password(passwordEncoder.encode(userPostDto.password()))
                 .createdAt(TimeService.now())
                 .build();
         return this.userRepository.saveAndFlush(user);

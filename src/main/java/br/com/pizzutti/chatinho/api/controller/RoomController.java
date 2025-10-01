@@ -1,9 +1,9 @@
 package br.com.pizzutti.chatinho.api.controller;
 
-import br.com.pizzutti.chatinho.api.domain.message.MessageAggregatePageDto;
-import br.com.pizzutti.chatinho.api.domain.room.RoomAggregateDto;
-import br.com.pizzutti.chatinho.api.domain.room.RoomDto;
-import br.com.pizzutti.chatinho.api.domain.room.RoomInputDto;
+import br.com.pizzutti.chatinho.api.domain.message.MessageGetAggregatePageDto;
+import br.com.pizzutti.chatinho.api.domain.room.RoomGetAggregateDto;
+import br.com.pizzutti.chatinho.api.domain.room.RoomGetDto;
+import br.com.pizzutti.chatinho.api.domain.room.RoomPostDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomFacade;
 import br.com.pizzutti.chatinho.api.domain.user.User;
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Null;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -41,10 +40,10 @@ public class RoomController {
     @PostMapping
     @Operation(summary = "Cria uma sala")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = RoomAggregateDto.class)))
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
     })
-    public ResponseEntity<RoomAggregateDto> create(@RequestBody @Valid RoomInputDto roomInputDto) {
-        return ResponseEntity.status(201).body(this.roomFacade.create(roomInputDto, this.getIdUserLogged()));
+    public ResponseEntity<RoomGetAggregateDto> create(@RequestBody @Valid RoomPostDto roomPostDto) {
+        return ResponseEntity.status(201).body(this.roomFacade.create(roomPostDto, this.getIdUserLogged()));
     }
 
     @DeleteMapping("/{id}")
@@ -60,28 +59,28 @@ public class RoomController {
     @GetMapping
     @Operation(summary = "Lista as salas do usuário logado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomAggregateDto.class)))),
+        @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomGetAggregateDto.class)))),
     })
-    public ResponseEntity<List<RoomDto>> list() {
+    public ResponseEntity<List<RoomGetDto>> list() {
         return ResponseEntity.ok(this.roomFacade.findAllByUser(this.getIdUserLogged()));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtém os dados detalhados de uma sala")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RoomAggregateDto.class))),
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class))),
         @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
     })
-    public ResponseEntity<RoomAggregateDto> findById(@PathVariable Long id) {
+    public ResponseEntity<RoomGetAggregateDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.roomFacade.findById(id));
     }
 
     @GetMapping("/{id}/message")
     @Operation(summary = "Obtém as mensagens de uma sala (listadas e ordenadas pelas últimas)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageAggregatePageDto.class)))
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageGetAggregatePageDto.class)))
     })
-    public ResponseEntity<MessageAggregatePageDto> listMessages(
+    public ResponseEntity<MessageGetAggregatePageDto> listMessages(
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "20") Integer perPage,
             @PathVariable Long id

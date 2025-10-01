@@ -1,8 +1,8 @@
 package br.com.pizzutti.chatinho.api.domain.room;
 
-import br.com.pizzutti.chatinho.api.domain.message.MessageAggregateDto;
-import br.com.pizzutti.chatinho.api.domain.message.MessageAggregatePageDto;
-import br.com.pizzutti.chatinho.api.domain.user.UserDto;
+import br.com.pizzutti.chatinho.api.domain.message.MessageGetAggregateDto;
+import br.com.pizzutti.chatinho.api.domain.message.MessageGetAggregatePageDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
 import br.com.pizzutti.chatinho.api.infra.service.FilterDirectionEnum;
 import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
 import br.com.pizzutti.chatinho.api.domain.member.Member;
@@ -35,15 +35,15 @@ public class RoomFacade {
     }
 
     @Transactional
-    public RoomAggregateDto create(RoomInputDto roomInputDto, Long owner) {
-        var room = this.roomService.create(roomInputDto, owner);
+    public RoomGetAggregateDto create(RoomPostDto roomPostDto, Long owner) {
+        var room = this.roomService.create(roomPostDto, owner);
         var member = this.memberService.create(room.getId(), owner);
         var user = this.userService.findById(member.getIdUser());
-        return RoomAggregateDto.builder()
+        return RoomGetAggregateDto.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .owner(UserDto.fromUser(user))
-                .members(List.of(UserDto.fromUser(user)))
+                .owner(UserGetDto.fromUser(user))
+                .members(List.of(UserGetDto.fromUser(user)))
                 .createdAt(room.getCreatedAt())
                 .build();
     }
@@ -52,37 +52,37 @@ public class RoomFacade {
         this.roomService.delete(id);
     }
 
-    public List<RoomDto> findAllByUser(Long idUser) {
+    public List<RoomGetDto> findAllByUser(Long idUser) {
         var members = this.memberService.filter("idUser", idUser, FilterOperationEnum.EQUAL).find();
         var idRooms = members.stream().map(Member::getIdRoom).toList();
         return this.roomService.filter("id", idRooms, FilterOperationEnum.IN)
                 .find()
                 .stream()
-                .map(RoomDto::fromRoom)
+                .map(RoomGetDto::fromRoom)
                 .toList();
     }
 
-    public RoomAggregateDto findById(Long idRoom) {
+    public RoomGetAggregateDto findById(Long idRoom) {
         var room = this.roomService.findById(idRoom);
         var owner = this.userService.findById(room.getIdOwner());
         var members = this.memberService.filter("idRoom", room.getId(), FilterOperationEnum.EQUAL).find();
-        var users = members.stream().map(m -> UserDto.fromUser(this.userService.findById(m.getIdUser()))).toList();
-        return RoomAggregateDto.builder()
+        var users = members.stream().map(m -> UserGetDto.fromUser(this.userService.findById(m.getIdUser()))).toList();
+        return RoomGetAggregateDto.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .owner(UserDto.fromUser(owner))
+                .owner(UserGetDto.fromUser(owner))
                 .members(users)
                 .createdAt(room.getCreatedAt())
                 .build();
     }
 
-    public MessageAggregatePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
+    public MessageGetAggregatePageDto findMessages(Long idRoom, Integer page, Integer perPage) {
         var room = this.roomService.findById(idRoom);
         var pageableMessages = this.messageService
                 .filter("idRoom", idRoom, FilterOperationEnum.EQUAL)
                 .orderBy("createdAt", FilterDirectionEnum.DESC)
                 .find(page, perPage);
-        return MessageAggregatePageDto
+        return MessageGetAggregatePageDto
                 .builder()
                 .data(this.getListMessageAggregateDto(pageableMessages, room))
                 .page(pageableMessages.getNumber() + 1)
@@ -93,12 +93,12 @@ public class RoomFacade {
                 .build();
     }
 
-    private List<MessageAggregateDto> getListMessageAggregateDto(Page<Message> pageableMessages, Room room) {
+    private List<MessageGetAggregateDto> getListMessageAggregateDto(Page<Message> pageableMessages, Room room) {
         return pageableMessages.getContent()
                 .stream()
-                .map(message -> MessageAggregateDto.builder()
-                        .room(RoomDto.fromRoom(room))
-                        .user(UserDto.fromUser(this.userService.findById(message.getIdUser())))
+                .map(message -> MessageGetAggregateDto.builder()
+                        .room(RoomGetDto.fromRoom(room))
+                        .user(UserGetDto.fromUser(this.userService.findById(message.getIdUser())))
                         .content(message.getContent())
                         .type(message.getType())
                         .createdAt(message.getCreatedAt())

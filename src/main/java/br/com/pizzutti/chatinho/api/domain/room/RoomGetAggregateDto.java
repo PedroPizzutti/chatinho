@@ -1,16 +1,16 @@
 package br.com.pizzutti.chatinho.api.domain.room;
 
-import br.com.pizzutti.chatinho.api.domain.user.UserDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-public record RoomAggregateDto(
+public record RoomGetAggregateDto(
         Long id,
         String name,
         LocalDateTime createdAt,
-        UserDto owner,
-        List<UserDto> members
+        UserGetDto owner,
+        List<UserGetDto> members
 ) {}

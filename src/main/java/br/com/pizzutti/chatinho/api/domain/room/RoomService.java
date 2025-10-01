@@ -24,10 +24,10 @@ public class RoomService extends FilterService<Room> {
         return this;
     }
 
-    public Room create(RoomInputDto roomInputDto, Long owner) {
+    public Room create(RoomPostDto roomPostDto, Long owner) {
         var room = Room.builder()
                 .idOwner(owner)
-                .name(roomInputDto.name())
+                .name(roomPostDto.name())
                 .createdAt(TimeService.now())
                 .build();
 

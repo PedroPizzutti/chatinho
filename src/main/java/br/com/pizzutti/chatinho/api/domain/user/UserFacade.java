@@ -20,19 +20,19 @@ public class UserFacade {
     }
 
     @Transactional
-    public UserDto createUser(UserInputDto userInputDto) {
-        this.totemService.burn(userInputDto.totem());
-        var user = this.userService.create(userInputDto);
-        return UserDto.fromUser(user);
+    public UserGetDto createUser(UserPostDto userPostDto) {
+        this.totemService.burn(userPostDto.totem());
+        var user = this.userService.create(userPostDto);
+        return UserGetDto.fromUser(user);
     }
 
-    public List<UserDto> listUser(String nickname, String login) {
+    public List<UserGetDto> listUser(String nickname, String login) {
         return this.userService
             .filter("nickname", nickname, FilterOperationEnum.LIKE)
             .filter("login", login, FilterOperationEnum.LIKE)
             .find()
             .stream()
-            .map(UserDto::fromUser)
+            .map(UserGetDto::fromUser)
             .toList();
     }
 }

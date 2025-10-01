@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record TokenDto (
+public record TokenGetDto(
         String accessToken,
         String refreshToken,
         String tokenType,

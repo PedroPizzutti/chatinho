@@ -22,13 +22,13 @@ public record MessageDto(
                 .build();
     }
 
-    public static MessageDto fromMessageAggregateDto(MessageAggregateDto messageAggregateDto) {
+    public static MessageDto fromMessageAggregateDto(MessageGetAggregateDto messageGetAggregateDto) {
         return MessageDto.builder()
-                .content(messageAggregateDto.content())
-                .type(messageAggregateDto.type())
-                .idRoom(messageAggregateDto.room().id())
-                .idUser(messageAggregateDto.user().id())
-                .createdAt(messageAggregateDto.createdAt())
+                .content(messageGetAggregateDto.content())
+                .type(messageGetAggregateDto.type())
+                .idRoom(messageGetAggregateDto.room().id())
+                .idUser(messageGetAggregateDto.user().id())
+                .createdAt(messageGetAggregateDto.createdAt())
                 .build();
     }
 }

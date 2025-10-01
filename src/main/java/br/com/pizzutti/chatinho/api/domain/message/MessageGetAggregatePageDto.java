@@ -4,4 +4,4 @@ import br.com.pizzutti.chatinho.api.infra.config.communication.PageDto;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder
-public class MessageAggregatePageDto extends PageDto<MessageAggregateDto> {}
+public class MessageGetAggregatePageDto extends PageDto<MessageGetAggregateDto> {}

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserInputDto(
+public record UserPostDto(
         @NotBlank(message = "totem não pode estar vazio")
         @Size(min = 36, max = 36, message = "totem deve ter exatamente 36 caracteres")
         String totem,

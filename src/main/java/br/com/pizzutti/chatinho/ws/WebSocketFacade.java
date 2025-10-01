@@ -1,9 +1,9 @@
 package br.com.pizzutti.chatinho.ws;
 
-import br.com.pizzutti.chatinho.api.domain.message.MessageAggregateDto;
+import br.com.pizzutti.chatinho.api.domain.message.MessageGetAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.message.MessageDto;
 import br.com.pizzutti.chatinho.api.infra.service.TimeService;
-import br.com.pizzutti.chatinho.api.domain.message.MessageAggregateInputDto;
+import br.com.pizzutti.chatinho.api.domain.message.MessagePostAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomFacade;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,10 +56,10 @@ public class WebSocketFacade {
         this.propagateMessage(messageAggregateDto);
     }
 
-    private void propagateMessage(MessageAggregateDto messageAggregateDto) {
-        this.rabbitTemplate.convertAndSend(MessageDto.fromMessageAggregateDto(messageAggregateDto));
-        var textMessage = this.prepareTextMessage(messageAggregateDto);
-        var sessions = this.sessionRooms.get(messageAggregateDto.room().id());
+    private void propagateMessage(MessageGetAggregateDto messageGetAggregateDto) {
+        this.rabbitTemplate.convertAndSend(MessageDto.fromMessageAggregateDto(messageGetAggregateDto));
+        var textMessage = this.prepareTextMessage(messageGetAggregateDto);
+        var sessions = this.sessionRooms.get(messageGetAggregateDto.room().id());
         for (WebSocketSession session : sessions) {
             if (!session.isOpen()) continue;
             try {
@@ -70,18 +70,18 @@ public class WebSocketFacade {
         }
     }
 
-    private TextMessage prepareTextMessage(MessageAggregateDto messageAggregateDto) {
+    private TextMessage prepareTextMessage(MessageGetAggregateDto messageGetAggregateDto) {
         try {
-            return new TextMessage(objectMapper.writeValueAsString(messageAggregateDto));
+            return new TextMessage(objectMapper.writeValueAsString(messageGetAggregateDto));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private MessageAggregateDto getMessageAggregateDto(String payload) {
+    private MessageGetAggregateDto getMessageAggregateDto(String payload) {
         try {
-            var messageInputDto = objectMapper.readValue(payload, MessageAggregateInputDto.class);
-            return MessageAggregateDto.builder()
+            var messageInputDto = objectMapper.readValue(payload, MessagePostAggregateDto.class);
+            return MessageGetAggregateDto.builder()
                     .createdAt(TimeService.now())
                     .type(messageInputDto.type())
                     .room(messageInputDto.room())

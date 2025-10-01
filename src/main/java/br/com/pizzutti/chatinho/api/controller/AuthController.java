@@ -1,9 +1,9 @@
 package br.com.pizzutti.chatinho.api.controller;
 
-import br.com.pizzutti.chatinho.api.domain.auth.LoginDto;
-import br.com.pizzutti.chatinho.api.domain.auth.RefreshTokenDto;
-import br.com.pizzutti.chatinho.api.domain.token.TokenDto;
-import br.com.pizzutti.chatinho.api.domain.user.UserTokenDto;
+import br.com.pizzutti.chatinho.api.domain.auth.LoginPostDto;
+import br.com.pizzutti.chatinho.api.domain.auth.RefreshTokenPostDto;
+import br.com.pizzutti.chatinho.api.domain.token.TokenGetDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.auth.AuthFacade;
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,24 +32,24 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Loga um usuário no sistema, obtendo um token")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserGetAggregateDto.class))),
         @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<UserTokenDto> login(@RequestBody LoginDto loginDto) {
-        return ResponseEntity.status(201).body(this.authFacade.loginApi(loginDto));
+    public ResponseEntity<UserGetAggregateDto> login(@RequestBody LoginPostDto loginPostDto) {
+        return ResponseEntity.status(201).body(this.authFacade.loginApi(loginPostDto));
     }
 
     @PostMapping("/refresh-login")
     @Operation(summary = "Renova o token de um usuário")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserTokenDto.class))),
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserGetAggregateDto.class))),
         @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<TokenDto> refreshLogin(@RequestBody RefreshTokenDto refreshTokenDto) {
-        return ResponseEntity.status(201).body(this.authFacade.refreshLoginApi(refreshTokenDto));
+    public ResponseEntity<TokenGetDto> refreshLogin(@RequestBody RefreshTokenPostDto refreshTokenPostDto) {
+        return ResponseEntity.status(201).body(this.authFacade.refreshLoginApi(refreshTokenPostDto));
     }
 }

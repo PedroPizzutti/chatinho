@@ -1,7 +1,7 @@
 package br.com.pizzutti.chatinho.api.domain.invite;
 
-import br.com.pizzutti.chatinho.api.domain.room.RoomDto;
-import br.com.pizzutti.chatinho.api.domain.user.UserDto;
+import br.com.pizzutti.chatinho.api.domain.room.RoomGetDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
 import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
 import br.com.pizzutti.chatinho.api.domain.member.MemberService;
 import br.com.pizzutti.chatinho.api.domain.room.RoomService;
@@ -37,16 +37,16 @@ public class InviteFacade {
         return this;
     }
 
-    public InviteAggregateDto create(InviteInputDto inviteInputDto) {
-        this.validationsRoom(inviteInputDto);
-        this.validationsMember(inviteInputDto);
-        this.validationsInvite(inviteInputDto);
-        var invite = this.inviteService.create(inviteInputDto);
+    public InviteGetAggregateDto create(InvitePostDto invitePostDto) {
+        this.validationsRoom(invitePostDto);
+        this.validationsMember(invitePostDto);
+        this.validationsInvite(invitePostDto);
+        var invite = this.inviteService.create(invitePostDto);
         return this.inviteAggregateDtoFromInvite(invite);
     }
 
     @Transactional
-    public InviteAggregateDto accept(Long id) {
+    public InviteGetAggregateDto accept(Long id) {
         var invite = this.inviteService.findById(id);
         if (!invite.getStatus().equals(InviteStatusEnum.PENDING))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Convite não está pendente!");
@@ -55,7 +55,7 @@ public class InviteFacade {
         return inviteAggregateDtoFromInvite(this.inviteService.update(invite));
     }
 
-    public InviteAggregateDto reject(Long id) {
+    public InviteGetAggregateDto reject(Long id) {
         var invite = this.inviteService.findById(id);
         if (!invite.getStatus().equals(InviteStatusEnum.PENDING))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Convite não está pendente!");
@@ -63,40 +63,40 @@ public class InviteFacade {
         return inviteAggregateDtoFromInvite(this.inviteService.update(invite));
     }
 
-    private InviteAggregateDto inviteAggregateDtoFromInvite(Invite invite) {
-        return InviteAggregateDto.builder()
+    private InviteGetAggregateDto inviteAggregateDtoFromInvite(Invite invite) {
+        return InviteGetAggregateDto.builder()
             .id(invite.getId())
             .createdAt(invite.getCreatedAt())
             .status(invite.getStatus())
-            .from(UserDto.fromUser(this.userService.findById(invite.getIdUserTo())))
-            .to(UserDto.fromUser(this.userService.findById(invite.getIdUserFrom())))
-            .room(RoomDto.fromRoom(this.roomService.findById(invite.getIdRoom())))
+            .from(UserGetDto.fromUser(this.userService.findById(invite.getIdUserTo())))
+            .to(UserGetDto.fromUser(this.userService.findById(invite.getIdUserFrom())))
+            .room(RoomGetDto.fromRoom(this.roomService.findById(invite.getIdRoom())))
             .build();
     }
 
-    private void validationsRoom(InviteInputDto inviteInputDto) {
-        var room = this.roomService.findById(inviteInputDto.idRoom());
+    private void validationsRoom(InvitePostDto invitePostDto) {
+        var room = this.roomService.findById(invitePostDto.idRoom());
 
-        if (!room.getIdOwner().equals(inviteInputDto.idUserFrom()))
+        if (!room.getIdOwner().equals(invitePostDto.idUserFrom()))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Somente donos de sala podem criar convites!");
 
-        if (room.getIdOwner().equals(inviteInputDto.idUserTo()))
+        if (room.getIdOwner().equals(invitePostDto.idUserTo()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível criar um convite para o dona da sala!");
     }
 
-    private void validationsMember(InviteInputDto inviteInputDto) {
+    private void validationsMember(InvitePostDto invitePostDto) {
         var listMember = this.memberService
-                .filter("idRoom", inviteInputDto.idRoom(), FilterOperationEnum.EQUAL)
-                .filter("idUser", inviteInputDto.idUserTo(), FilterOperationEnum.EQUAL)
+                .filter("idRoom", invitePostDto.idRoom(), FilterOperationEnum.EQUAL)
+                .filter("idUser", invitePostDto.idUserTo(), FilterOperationEnum.EQUAL)
                 .find();
 
         if (!listMember.isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível criar convite para um membro da sala!");
     }
 
-    private void validationsInvite(InviteInputDto inviteInputDto) {
+    private void validationsInvite(InvitePostDto invitePostDto) {
         var listInvite = this.inviteService
-                .filter("idUserTo", inviteInputDto.idUserTo(), FilterOperationEnum.EQUAL)
+                .filter("idUserTo", invitePostDto.idUserTo(), FilterOperationEnum.EQUAL)
                 .filter("status", "PENDING", FilterOperationEnum.EQUAL)
                 .find();
 
@@ -105,7 +105,7 @@ public class InviteFacade {
 
     }
 
-    public List<InviteAggregateDto> listInvite(Long idUserFrom, Long idUserTo, Long idRoom, InviteStatusEnum status) {
+    public List<InviteGetAggregateDto> listInvite(Long idUserFrom, Long idUserTo, Long idRoom, InviteStatusEnum status) {
         return this.inviteService
                 .filter("status", Objects.isNull(status) ? null : status.toString(), FilterOperationEnum.EQUAL)
                 .filter("idUserFrom", idUserFrom, FilterOperationEnum.EQUAL)

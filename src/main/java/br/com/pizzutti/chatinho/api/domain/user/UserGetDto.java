@@ -5,14 +5,14 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record UserDto(
+public record UserGetDto(
         Long id,
         String login,
         String nickname,
         LocalDateTime createdAt
 ) {
-    public static UserDto fromUser(User user) {
-        return UserDto.builder()
+    public static UserGetDto fromUser(User user) {
+        return UserGetDto.builder()
                 .id(user.getId())
                 .login(user.getLogin())
                 .nickname(user.getNickname())

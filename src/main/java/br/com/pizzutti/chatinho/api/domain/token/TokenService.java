@@ -1,7 +1,7 @@
 package br.com.pizzutti.chatinho.api.domain.token;
 
 import br.com.pizzutti.chatinho.api.infra.service.TimeService;
-import br.com.pizzutti.chatinho.api.domain.user.UserDto;
+import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
 import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
 import br.com.pizzutti.chatinho.api.infra.service.FilterService;
 import org.jose4j.jws.JsonWebSignature;
@@ -32,12 +32,12 @@ public class TokenService extends FilterService<Token> {
         this.tokenRepository = tokenRepository;
     }
 
-    public TokenDto generateToken(UserDto userDto) {
-        var accessToken = this.generateAccessToken(userDto.id().toString());
-        var refreshToken = this.generatedRefreshToken(userDto.id().toString());
-        this.saveRefreshToken(userDto, refreshToken);
+    public TokenGetDto generateToken(UserGetDto userGetDto) {
+        var accessToken = this.generateAccessToken(userGetDto.id().toString());
+        var refreshToken = this.generatedRefreshToken(userGetDto.id().toString());
+        this.saveRefreshToken(userGetDto, refreshToken);
 
-        return TokenDto.builder()
+        return TokenGetDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .expiresAt(TimeService.now().plusSeconds(expiration))
@@ -131,9 +131,9 @@ public class TokenService extends FilterService<Token> {
         }
     }
 
-    private void saveRefreshToken(UserDto userDto, String refreshToken) {
+    private void saveRefreshToken(UserGetDto userGetDto, String refreshToken) {
         var token = Token.builder()
-                .idOwner(userDto.id())
+                .idOwner(userGetDto.id())
                 .createdAt(TimeService.now())
                 .jwt(refreshToken)
                 .build();
