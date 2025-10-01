@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,11 @@ import java.util.List;
 @Tag(name = "Salas")
 @RestController
 @RequestMapping("v1/room")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+})
 public class RoomController {
 
     private final RoomFacade roomFacade;
@@ -35,21 +41,26 @@ public class RoomController {
     @PostMapping
     @Operation(summary = "Cria uma sala")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = RoomAggregateDto.class))),
-        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = RoomAggregateDto.class)))
     })
     public ResponseEntity<RoomAggregateDto> create(@RequestBody @Valid RoomInputDto roomInputDto) {
         return ResponseEntity.status(201).body(this.roomFacade.create(roomInputDto, this.getIdUserLogged()));
     }
 
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta uma sala")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204")
+    })
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.roomFacade.delete(id);
+        return ResponseEntity.noContent().build();
+    };
+
     @GetMapping
     @Operation(summary = "Lista as salas do usuário logado")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomAggregateDto.class)))),
-        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<List<RoomDto>> list() {
         return ResponseEntity.ok(this.roomFacade.findAllByUser(this.getIdUserLogged()));
@@ -59,9 +70,7 @@ public class RoomController {
     @Operation(summary = "Obtém os dados detalhados de uma sala")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RoomAggregateDto.class))),
-        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<RoomAggregateDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.roomFacade.findById(id));
@@ -70,9 +79,7 @@ public class RoomController {
     @GetMapping("/{id}/message")
     @Operation(summary = "Obtém as mensagens de uma sala (listadas e ordenadas pelas últimas)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageAggregatePageDto.class))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageAggregatePageDto.class)))
     })
     public ResponseEntity<MessageAggregatePageDto> listMessages(
             @RequestParam(required = false, defaultValue = "1") Integer page,

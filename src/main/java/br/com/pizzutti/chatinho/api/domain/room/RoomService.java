@@ -35,6 +35,10 @@ public class RoomService extends FilterService<Room> {
         return room;
     }
 
+    public void delete(Long id) {
+        this.roomRepository.deleteById(id);
+    }
+
     public List<Room> find() {
         try {
             return this.roomRepository.findAll(super.specification());

@@ -48,6 +48,10 @@ public class RoomFacade {
                 .build();
     }
 
+    public void delete(Long id) {
+        this.roomService.delete(id);
+    }
+
     public List<RoomDto> findAllByUser(Long idUser) {
         var members = this.memberService.filter("idUser", idUser, FilterOperationEnum.EQUAL).find();
         var idRooms = members.stream().map(Member::getIdRoom).toList();
