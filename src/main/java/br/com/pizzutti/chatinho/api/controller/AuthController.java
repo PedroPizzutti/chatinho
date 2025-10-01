@@ -3,7 +3,7 @@ package br.com.pizzutti.chatinho.api.controller;
 import br.com.pizzutti.chatinho.api.domain.auth.LoginPostDto;
 import br.com.pizzutti.chatinho.api.domain.auth.RefreshTokenPostDto;
 import br.com.pizzutti.chatinho.api.domain.token.TokenGetDto;
-import br.com.pizzutti.chatinho.api.domain.user.UserGetAggregateDto;
+import br.com.pizzutti.chatinho.api.domain.token.TokenGetAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.auth.AuthFacade;
 import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,19 +32,19 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Loga um usuário no sistema, obtendo um token")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserGetAggregateDto.class))),
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
         @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
-    public ResponseEntity<UserGetAggregateDto> login(@RequestBody LoginPostDto loginPostDto) {
+    public ResponseEntity<TokenGetAggregateDto> login(@RequestBody LoginPostDto loginPostDto) {
         return ResponseEntity.status(201).body(this.authFacade.loginApi(loginPostDto));
     }
 
     @PostMapping("/refresh-login")
     @Operation(summary = "Renova o token de um usuário")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserGetAggregateDto.class))),
+        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
         @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
         @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
