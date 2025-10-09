@@ -33,7 +33,7 @@ services:
 
   chat:
     build: .
-    container_name: chat-ws
+    container_name: chatinho
     restart: always
     ports:
       - "14500:14500"
