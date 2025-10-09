@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.pizzutti</groupId>
-	<artifactId>chat-ws</artifactId>
+	<artifactId>chatinho</artifactId>
 	<version>1.0.0</version>
 	<name>chat-ws</name>
-	<description>websocket para chat interno</description>
+	<description>aplicação do mini chat "chatinho"</description>
 	<url/>
 	<licenses>
 		<license/>
