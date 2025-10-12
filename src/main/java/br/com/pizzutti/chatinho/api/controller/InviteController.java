@@ -32,10 +32,10 @@ public class InviteController {
     @PostMapping
     @Operation(summary = "Cria um convite")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "CREATED",
+                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
     })
     public ResponseEntity<InviteGetAggregateDto> create(@RequestBody @Valid InvitePostDto invitePostDto) {
         return ResponseEntity.status(201).body(this.inviteFacade.create(invitePostDto));
@@ -44,10 +44,14 @@ public class InviteController {
     @PatchMapping("{id}/accept")
     @Operation(summary = "Aceita um convite")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(
+                    responseCode = "202",
+                    description = "ACCEPTED",
+                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = AdviceDto.class))),
     })
     public ResponseEntity<InviteGetAggregateDto> accept(@PathVariable Long id) {
         return ResponseEntity.status(202).body(this.inviteFacade.accept(id));
@@ -56,10 +60,14 @@ public class InviteController {
     @PatchMapping("{id}/reject")
     @Operation(summary = "Rejeita um convite")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "202", content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(
+                    responseCode = "202",
+                    description = "ACCEPTED",
+                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = AdviceDto.class))),
     })
     public ResponseEntity<InviteGetAggregateDto> reject(@PathVariable Long id) {
         return ResponseEntity.status(202).body(this.inviteFacade.reject(id));
@@ -68,9 +76,10 @@ public class InviteController {
     @GetMapping
     @Operation(summary = "Lista os convites")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = InviteGetAggregateDto.class)))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = InviteGetAggregateDto.class)))),
     })
     public ResponseEntity<List<InviteGetAggregateDto>> list(
             @RequestParam(required = false) Long idUserFrom,

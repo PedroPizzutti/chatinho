@@ -31,10 +31,10 @@ public class UserController {
     @PostMapping("new")
     @Operation(summary = "Cria um usuário")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = UserGetDto.class))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "403", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "CREATED",
+                    content = @Content(schema = @Schema(implementation = UserGetDto.class))),
     })
     public ResponseEntity<UserGetDto> createUser(@RequestBody @Valid UserPostDto userPostDto) {
         return ResponseEntity.status(201).body(this.userFacade.createUser(userPostDto));
@@ -43,10 +43,10 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Lista os usuários")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGetDto.class)))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-            @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserGetDto.class)))),
     })
     public ResponseEntity<List<UserGetDto>> listUsers(
             @RequestParam(value = "nick", required = false) String nick,

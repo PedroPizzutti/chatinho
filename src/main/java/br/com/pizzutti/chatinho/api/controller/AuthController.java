@@ -32,10 +32,10 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Loga um usuário no sistema, obtendo um token")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
-        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+        @ApiResponse(
+                responseCode = "201",
+                description = "CREATED",
+                content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
     })
     public ResponseEntity<TokenGetAggregateDto> login(@RequestBody LoginPostDto loginPostDto) {
         return ResponseEntity.status(201).body(this.authFacade.loginApi(loginPostDto));
@@ -44,10 +44,10 @@ public class AuthController {
     @PostMapping("/refresh-login")
     @Operation(summary = "Renova o token de um usuário")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
-        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+        @ApiResponse(
+                responseCode = "201",
+                description = "CREATED",
+                content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
     })
     public ResponseEntity<TokenGetDto> refreshLogin(@RequestBody RefreshTokenPostDto refreshTokenPostDto) {
         return ResponseEntity.status(201).body(this.authFacade.refreshLoginApi(refreshTokenPostDto));

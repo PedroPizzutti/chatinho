@@ -13,6 +13,10 @@ public enum AdviceEnum {
         this.value = value;
     }
 
+    public Integer toHttpStatus() {
+        return this.value;
+    }
+
     public static AdviceEnum fromHttpStatus(Integer httpStatus) {
         for (AdviceEnum advice : AdviceEnum.values()) {
             if (advice.value.equals(httpStatus)) {

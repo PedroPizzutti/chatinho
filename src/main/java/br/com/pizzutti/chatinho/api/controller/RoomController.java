@@ -24,11 +24,6 @@ import java.util.List;
 @Tag(name = "Salas")
 @RestController
 @RequestMapping("v1/room")
-@ApiResponses(value = {
-        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-        @ApiResponse(responseCode = "500", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
-})
 public class RoomController {
 
     private final RoomFacade roomFacade;
@@ -40,7 +35,10 @@ public class RoomController {
     @PostMapping
     @Operation(summary = "Cria uma sala")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
+        @ApiResponse(
+                responseCode = "201",
+                description = "CREATED",
+                content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
     })
     public ResponseEntity<RoomGetAggregateDto> create(@RequestBody @Valid RoomPostDto roomPostDto) {
         return ResponseEntity.status(201).body(this.roomFacade.create(roomPostDto, this.getIdUserLogged()));
@@ -49,7 +47,7 @@ public class RoomController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta uma sala")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204")
+            @ApiResponse(responseCode = "204", description = "NO_CONTENT")
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         this.roomFacade.delete(id);
@@ -59,7 +57,10 @@ public class RoomController {
     @GetMapping
     @Operation(summary = "Lista as salas do usuário logado")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomGetAggregateDto.class)))),
+        @ApiResponse(
+                responseCode = "200",
+                description = "OK",
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomGetAggregateDto.class)))),
     })
     public ResponseEntity<List<RoomGetDto>> list() {
         return ResponseEntity.ok(this.roomFacade.findAllByUser(this.getIdUserLogged()));
@@ -68,8 +69,14 @@ public class RoomController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtém os dados detalhados de uma sala")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class))),
-        @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+        @ApiResponse(
+                responseCode = "200",
+                description = "OK",
+                content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class))),
+        @ApiResponse(
+                responseCode = "404",
+                description = "NOT_FOUND",
+                content = @Content(schema = @Schema(implementation = AdviceDto.class))),
     })
     public ResponseEntity<RoomGetAggregateDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.roomFacade.findById(id));
@@ -78,7 +85,14 @@ public class RoomController {
     @GetMapping("/{id}/message")
     @Operation(summary = "Obtém as mensagens de uma sala (listadas e ordenadas pelas últimas)")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = MessageGetAggregatePageDto.class)))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(schema = @Schema(implementation = MessageGetAggregatePageDto.class))),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT_FOUND",
+                    content = @Content(schema = @Schema(implementation = AdviceDto.class)))
     })
     public ResponseEntity<MessageGetAggregatePageDto> listMessages(
             @RequestParam(required = false, defaultValue = "1") Integer page,
