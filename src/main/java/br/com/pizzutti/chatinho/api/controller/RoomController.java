@@ -50,9 +50,16 @@ public class RoomController {
             @ApiResponse(responseCode = "204", description = "NO_CONTENT")
     })
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        this.roomFacade.delete(id);
+        this.roomFacade.delete(id, this.getIdUserLogged());
         return ResponseEntity.noContent().build();
     };
+
+    @PatchMapping("/{id}/leave")
+    @Operation(summary = "Sai de uma sala")
+    public ResponseEntity<Void> leave(@PathVariable Long id) {
+        this.roomFacade.leave(id, this.getIdUserLogged());
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping
     @Operation(summary = "Lista as salas do usuário logado")

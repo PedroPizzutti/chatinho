@@ -31,6 +31,10 @@ public class FilterService<T> {
                                 criteriaBuilder.upper(root.get(property)), value.toString().toUpperCase() + "%"
                             )
                     );
+            case DIFFERENT_OF -> this.specification =
+                    this.specification.and(
+                            ((root, query, criteriaBuilder) -> criteriaBuilder.notEqual(root.get(property), value))
+                    );
             case IN -> {
                 if (value instanceof Collection<?> collection && !collection.isEmpty()) {
                     this.specification =

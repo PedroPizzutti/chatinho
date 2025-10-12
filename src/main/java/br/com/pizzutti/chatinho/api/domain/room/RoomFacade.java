@@ -11,10 +11,13 @@ import br.com.pizzutti.chatinho.api.domain.member.MemberService;
 import br.com.pizzutti.chatinho.api.domain.message.MessageService;
 import br.com.pizzutti.chatinho.api.domain.user.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class RoomFacade {
@@ -48,8 +51,38 @@ public class RoomFacade {
                 .build();
     }
 
-    public void delete(Long id) {
-        this.roomService.delete(id);
+    public void delete(Long idRoom, Long idUser) {
+        var room = this.roomService.findById(idRoom);
+        if (!room.getIdOwner().equals(idUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Somente donos podem excluir sala!");
+        }
+        this.roomService.delete(room.getId());
+    }
+
+    @Transactional
+    public void leave(Long idRoom, Long idUser) {
+        var room = this.roomService.findById(idRoom);
+        var member = this.memberService
+                .filter("idRoom", room.getId(), FilterOperationEnum.EQUAL)
+                .filter("idUser", idUser, FilterOperationEnum.EQUAL)
+                .findOne();
+
+        this.memberService.delete(member.getId());
+
+        if (room.getIdOwner().equals(idUser)) {
+            var members = this.memberService
+                    .filter("idRoom", room.getId(), FilterOperationEnum.EQUAL)
+                    .filter("idUser", idUser, FilterOperationEnum.DIFFERENT_OF)
+                    .orderBy("createdAt", FilterDirectionEnum.ASC)
+                    .find();
+
+            if (members.isEmpty()) {
+                this.roomService.delete(room.getId());
+            } else {
+                room.setIdOwner(members.getFirst().getIdUser());
+                this.roomService.update(room);
+            }
+        }
     }
 
     public List<RoomGetDto> findAllByUser(Long idUser) {

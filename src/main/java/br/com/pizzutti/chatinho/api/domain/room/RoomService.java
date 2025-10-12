@@ -35,6 +35,11 @@ public class RoomService extends FilterService<Room> {
         return room;
     }
 
+    public Room update(Room room) {
+        this.roomRepository.saveAndFlush(room);
+        return room;
+    }
+
     public void delete(Long id) {
         this.roomRepository.deleteById(id);
     }

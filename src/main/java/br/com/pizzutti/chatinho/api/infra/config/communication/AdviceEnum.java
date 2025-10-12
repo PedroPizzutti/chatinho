@@ -5,6 +5,7 @@ public enum AdviceEnum {
     BAD_REQUEST(400),
     INVALID_CREDENTIALS(401),
     NOT_ENOUGH_RIGHTS(403),
+    NOT_FOUND(404),
     SERVER_ERROR(500);
 
     private final Integer value;
