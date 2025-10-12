@@ -19,9 +19,9 @@ public class OpenAPIConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         var info = new Info()
-                .title("chat-ws")
+                .title("chatinho")
                 .version("1.0")
-                .description("Serviço de chat via web service");
+                .description("Um mini chat, chatinho!");
 
         return new OpenAPI().info(info);
     }
