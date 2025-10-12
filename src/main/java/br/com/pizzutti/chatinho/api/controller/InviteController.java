@@ -47,11 +47,7 @@ public class InviteController {
             @ApiResponse(
                     responseCode = "202",
                     description = "ACCEPTED",
-                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class)))
     })
     public ResponseEntity<InviteGetAggregateDto> accept(@PathVariable Long id) {
         return ResponseEntity.status(202).body(this.inviteFacade.accept(id));
@@ -63,11 +59,7 @@ public class InviteController {
             @ApiResponse(
                     responseCode = "202",
                     description = "ACCEPTED",
-                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+                    content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class)))
     })
     public ResponseEntity<InviteGetAggregateDto> reject(@PathVariable Long id) {
         return ResponseEntity.status(202).body(this.inviteFacade.reject(id));

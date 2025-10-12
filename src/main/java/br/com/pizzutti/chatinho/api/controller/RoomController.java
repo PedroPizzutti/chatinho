@@ -56,6 +56,9 @@ public class RoomController {
 
     @PatchMapping("/{id}/leave")
     @Operation(summary = "Sai de uma sala")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "NO_CONTENT")
+    })
     public ResponseEntity<Void> leave(@PathVariable Long id) {
         this.roomFacade.leave(id, this.getIdUserLogged());
         return ResponseEntity.noContent().build();
@@ -79,11 +82,7 @@ public class RoomController {
         @ApiResponse(
                 responseCode = "200",
                 description = "OK",
-                content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class))),
-        @ApiResponse(
-                responseCode = "404",
-                description = "NOT_FOUND",
-                content = @Content(schema = @Schema(implementation = AdviceDto.class))),
+                content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
     })
     public ResponseEntity<RoomGetAggregateDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.roomFacade.findById(id));
