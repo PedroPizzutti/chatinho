@@ -33,10 +33,13 @@ public class UserService extends FilterService<User> implements UserDetailsServi
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var spec = super.reset().filter("login", username, FilterOperationEnum.EQUAL).specification();
-        return this.userRepository
-                .findOne(spec)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
+        try {
+            return this.userRepository
+                    .findOne(super.filter("login", username, FilterOperationEnum.EQUAL).specification())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "usuário/senha inválido!"));
+        } finally {
+            super.reset();
+        }
     }
 
     public User create(UserPostDto userPostDto) {

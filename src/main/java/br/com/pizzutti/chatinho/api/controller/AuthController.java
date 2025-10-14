@@ -5,7 +5,6 @@ import br.com.pizzutti.chatinho.api.domain.auth.RefreshTokenPostDto;
 import br.com.pizzutti.chatinho.api.domain.token.TokenGetDto;
 import br.com.pizzutti.chatinho.api.domain.token.TokenGetAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.auth.AuthFacade;
-import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

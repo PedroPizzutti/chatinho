@@ -18,10 +18,13 @@ public class TotemService extends FilterService<Totem> {
     }
 
     private Totem findByGuid(String guid) {
-        var spec = super.reset().filter("guid", guid, FilterOperationEnum.EQUAL).specification();
-        return this.totemRepository
-                .findOne(spec)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem inválido!"));
+        try {
+            return this.totemRepository
+                    .findOne(super.filter("guid", guid, FilterOperationEnum.EQUAL).specification())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Totem inválido!"));
+        } finally {
+            super.reset();
+        }
     }
 
     private void invalidate(Totem totem) {

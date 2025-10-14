@@ -62,11 +62,14 @@ public class TokenService extends FilterService<Token> {
     }
 
     public String validateRefreshToken(String token) {
-        var spec = super.reset().filter("jwt", token, FilterOperationEnum.EQUAL).specification();
-        var tokenBd = this.tokenRepository.findOne(spec)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token inválido!"));
-        this.tokenRepository.delete(tokenBd);
-
+        try {
+            var tokenBd = this.tokenRepository
+                    .findOne(super.filter("jwt", token, FilterOperationEnum.EQUAL).specification())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "token inválido!"));
+            this.tokenRepository.delete(tokenBd);
+        } finally {
+            super.reset();
+        }
         try {
             var jwtConsumer = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
