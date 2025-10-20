@@ -62,6 +62,7 @@ public class RoomFacade {
     @Transactional
     public void leave(Long idRoom, Long idUser) {
         var room = this.roomService.findById(idRoom);
+
         var member = this.memberService
                 .filter("idRoom", room.getId(), FilterOperationEnum.EQUAL)
                 .filter("idUser", idUser, FilterOperationEnum.EQUAL)
@@ -83,6 +84,27 @@ public class RoomFacade {
                 this.roomService.update(room);
             }
         }
+    }
+
+    @Transactional
+    public void kick(Long idRoom, Long idMember, Long idUser) {
+        var room = this.roomService.findById(idRoom);
+
+        if (idMember.equals(idUser)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é possível expulsar a si mesmo");
+        }
+
+        if (!room.getIdOwner().equals(idUser)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Somente donos podem expulsar da sala!");
+        }
+
+        var member = this.memberService
+                .filter("idRoom", idRoom, FilterOperationEnum.EQUAL)
+                .filter("idUser", idMember, FilterOperationEnum.EQUAL)
+                .filter("idUser", idUser, FilterOperationEnum.DIFFERENT_OF)
+                .findOne();
+
+        this.memberService.delete(member.getId());
     }
 
     public List<RoomGetDto> findAllByUser(Long idUser) {

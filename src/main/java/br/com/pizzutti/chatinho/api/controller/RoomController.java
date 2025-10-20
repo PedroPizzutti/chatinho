@@ -15,8 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.jose4j.jwk.Use;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,8 +41,9 @@ public class RoomController {
                 description = "CREATED",
                 content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
     })
-    public ResponseEntity<RoomGetAggregateDto> create(@RequestBody @Valid RoomPostDto roomPostDto) {
-        return ResponseEntity.status(201).body(this.roomFacade.create(roomPostDto, this.getIdUserLogged()));
+    public ResponseEntity<RoomGetAggregateDto> create(@RequestBody @Valid RoomPostDto roomPostDto,
+                                                      @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(201).body(this.roomFacade.create(roomPostDto, user.getId()));
     }
 
     @DeleteMapping("/{id}")
@@ -49,8 +51,9 @@ public class RoomController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "NO_CONTENT")
     })
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        this.roomFacade.delete(id, this.getIdUserLogged());
+    public ResponseEntity<Void> delete(@PathVariable Long id,
+                                       @AuthenticationPrincipal User user) {
+        this.roomFacade.delete(id, user.getId());
         return ResponseEntity.noContent().build();
     };
 
@@ -59,8 +62,17 @@ public class RoomController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "NO_CONTENT")
     })
-    public ResponseEntity<Void> leave(@PathVariable Long id) {
-        this.roomFacade.leave(id, this.getIdUserLogged());
+    public ResponseEntity<Void> leave(@PathVariable Long id,
+                                      @AuthenticationPrincipal User user) {
+        this.roomFacade.leave(id, user.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/kick/{idMember}")
+    public ResponseEntity<Void> kick(@PathVariable Long id,
+                                     @PathVariable Long idMember,
+                                     @AuthenticationPrincipal User user) {
+        this.roomFacade.kick(id, idMember, user.getId());
         return ResponseEntity.noContent().build();
     }
 
@@ -72,8 +84,8 @@ public class RoomController {
                 description = "OK",
                 content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomGetAggregateDto.class)))),
     })
-    public ResponseEntity<List<RoomGetDto>> list() {
-        return ResponseEntity.ok(this.roomFacade.findAllByUser(this.getIdUserLogged()));
+    public ResponseEntity<List<RoomGetDto>> list(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(this.roomFacade.findAllByUser(user.getId()));
     }
 
     @GetMapping("/{id}")
@@ -106,10 +118,5 @@ public class RoomController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(this.roomFacade.findMessages(id, page, perPage));
-    }
-
-    private Long getIdUserLogged() {
-        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getId();
     }
 }
