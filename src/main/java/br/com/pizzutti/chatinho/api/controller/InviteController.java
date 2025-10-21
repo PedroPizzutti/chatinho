@@ -1,6 +1,6 @@
 package br.com.pizzutti.chatinho.api.controller;
 
-import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
+import br.com.pizzutti.chatinho.api.domain.user.User;
 import br.com.pizzutti.chatinho.api.domain.invite.InviteGetAggregateDto;
 import br.com.pizzutti.chatinho.api.domain.invite.InvitePostDto;
 import br.com.pizzutti.chatinho.api.domain.invite.InviteStatusEnum;
@@ -13,7 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.jose4j.jwk.Use;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +39,9 @@ public class InviteController {
                     description = "CREATED",
                     content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class))),
     })
-    public ResponseEntity<InviteGetAggregateDto> create(@RequestBody @Valid InvitePostDto invitePostDto) {
-        return ResponseEntity.status(201).body(this.inviteFacade.create(invitePostDto));
+    public ResponseEntity<InviteGetAggregateDto> create(@RequestBody @Valid InvitePostDto invitePostDto,
+                                                        @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(201).body(this.inviteFacade.create(invitePostDto, user.getId()));
     }
 
     @PatchMapping("{id}/accept")
@@ -49,8 +52,9 @@ public class InviteController {
                     description = "ACCEPTED",
                     content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class)))
     })
-    public ResponseEntity<InviteGetAggregateDto> accept(@PathVariable Long id) {
-        return ResponseEntity.status(202).body(this.inviteFacade.accept(id));
+    public ResponseEntity<InviteGetAggregateDto> accept(@PathVariable Long id,
+                                                        @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(202).body(this.inviteFacade.accept(id, user.getId()));
     }
 
     @PatchMapping("{id}/reject")
@@ -61,8 +65,9 @@ public class InviteController {
                     description = "ACCEPTED",
                     content = @Content(schema = @Schema(implementation = InviteGetAggregateDto.class)))
     })
-    public ResponseEntity<InviteGetAggregateDto> reject(@PathVariable Long id) {
-        return ResponseEntity.status(202).body(this.inviteFacade.reject(id));
+    public ResponseEntity<InviteGetAggregateDto> reject(@PathVariable Long id,
+                                                        @AuthenticationPrincipal User user) {
+        return ResponseEntity.status(202).body(this.inviteFacade.reject(id, user.getId()));
     }
 
     @GetMapping
