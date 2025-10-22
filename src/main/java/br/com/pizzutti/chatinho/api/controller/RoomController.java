@@ -6,7 +6,6 @@ import br.com.pizzutti.chatinho.api.domain.room.RoomGetDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomPostDto;
 import br.com.pizzutti.chatinho.api.domain.room.RoomFacade;
 import br.com.pizzutti.chatinho.api.domain.user.User;
-import br.com.pizzutti.chatinho.api.infra.config.communication.AdviceDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.jose4j.jwk.Use;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -106,11 +104,7 @@ public class RoomController {
             @ApiResponse(
                     responseCode = "200",
                     description = "OK",
-                    content = @Content(schema = @Schema(implementation = MessageGetAggregatePageDto.class))),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "NOT_FOUND",
-                    content = @Content(schema = @Schema(implementation = AdviceDto.class)))
+                    content = @Content(schema = @Schema(implementation = MessageGetAggregatePageDto.class)))
     })
     public ResponseEntity<MessageGetAggregatePageDto> listMessages(
             @RequestParam(required = false, defaultValue = "1") Integer page,

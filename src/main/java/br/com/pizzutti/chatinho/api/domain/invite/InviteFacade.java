@@ -2,6 +2,7 @@ package br.com.pizzutti.chatinho.api.domain.invite;
 
 import br.com.pizzutti.chatinho.api.domain.room.RoomGetDto;
 import br.com.pizzutti.chatinho.api.domain.user.UserGetDto;
+import br.com.pizzutti.chatinho.api.infra.service.FilterDirectionEnum;
 import br.com.pizzutti.chatinho.api.infra.service.FilterOperationEnum;
 import br.com.pizzutti.chatinho.api.domain.member.MemberService;
 import br.com.pizzutti.chatinho.api.domain.room.RoomService;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class InviteFacade {
@@ -33,11 +35,6 @@ public class InviteFacade {
         this.roomService = roomService;
     }
 
-    public <U> InviteFacade filter(String property, U value, FilterOperationEnum operation) {
-        this.inviteService.filter(property, value, operation);
-        return this;
-    }
-
     public InviteGetAggregateDto create(InvitePostDto invitePostDto, Long idUserFrom) {
         this.validationsRoom(invitePostDto, idUserFrom);
         this.validationsMember(invitePostDto);
@@ -54,8 +51,20 @@ public class InviteFacade {
         return this.inviteAggregateDtoFromInvite(this.inviteService.create(invite));
     }
 
+    public List<InviteGetAggregateDto> get(InviteFilterDto filterDto) {
+        return this.inviteService
+                .filter("status", Optional.ofNullable(filterDto.status()).map(Object::toString).orElse(""), FilterOperationEnum.EQUAL)
+                .filter("idUserFrom", filterDto.idUserFrom(), FilterOperationEnum.EQUAL)
+                .filter("idUserTo", filterDto.idUserTo(), FilterOperationEnum.EQUAL)
+                .orderBy("createdAt", FilterDirectionEnum.DESC)
+                .find()
+                .stream()
+                .map(this::inviteAggregateDtoFromInvite)
+                .toList();
+    }
+
     @Transactional
-    public InviteGetAggregateDto accept(Long id, Long idUser) {
+    public void patchStatus(Long id, Long idUser, InviteStatusEnum status) {
         var invite = this.inviteService.findById(id);
 
         if (!invite.getIdUserTo().equals(idUser)) {
@@ -66,24 +75,11 @@ public class InviteFacade {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Convite não está pendente!");
         }
 
-        this.memberService.create(invite.getIdRoom(), invite.getIdUserTo());
-        invite.setStatus(InviteStatusEnum.ACCEPTED);
-
-        return inviteAggregateDtoFromInvite(this.inviteService.update(invite));
-    }
-
-    public InviteGetAggregateDto reject(Long id, Long idUser) {
-        var invite = this.inviteService.findById(id);
-
-        if (!invite.getIdUserTo().equals(idUser)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Este convite não é seu!");
+        if (status.equals(InviteStatusEnum.ACCEPTED)) {
+            this.memberService.create(invite.getIdRoom(), invite.getIdUserTo());
         }
-        
-        if (!invite.getStatus().equals(InviteStatusEnum.PENDING))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Convite não está pendente!");
-        
-        invite.setStatus(InviteStatusEnum.REJECTED);
-        return inviteAggregateDtoFromInvite(this.inviteService.update(invite));
+        invite.setStatus(status);
+        this.inviteService.update(invite);
     }
 
     private InviteGetAggregateDto inviteAggregateDtoFromInvite(Invite invite) {
@@ -135,17 +131,5 @@ public class InviteFacade {
         if (!listInvite.isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe convite para este usuário!");
 
-    }
-
-    public List<InviteGetAggregateDto> listInvite(Long idUserFrom, Long idUserTo, Long idRoom, InviteStatusEnum status) {
-        return this.inviteService
-                .filter("status", Objects.isNull(status) ? null : status.toString(), FilterOperationEnum.EQUAL)
-                .filter("idUserFrom", idUserFrom, FilterOperationEnum.EQUAL)
-                .filter("idUserTo", idUserTo, FilterOperationEnum.EQUAL)
-                .filter("idRoom", idRoom, FilterOperationEnum.EQUAL)
-                .find()
-                .stream()
-                .map(this::inviteAggregateDtoFromInvite)
-                .toList();
     }
 }
