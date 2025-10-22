@@ -30,24 +30,14 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Loga um usuário no sistema, obtendo um token")
-    @ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "201",
-                description = "CREATED",
-                content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "CREATED")})
     public ResponseEntity<TokenGetAggregateDto> login(@RequestBody LoginPostDto loginPostDto) {
         return ResponseEntity.status(201).body(this.authFacade.loginApi(loginPostDto));
     }
 
     @PostMapping("/refresh-login")
     @Operation(summary = "Renova o token de um usuário")
-    @ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "201",
-                description = "CREATED",
-                content = @Content(schema = @Schema(implementation = TokenGetAggregateDto.class))),
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "CREATED")})
     public ResponseEntity<TokenGetDto> refreshLogin(@RequestBody RefreshTokenPostDto refreshTokenPostDto) {
         return ResponseEntity.status(201).body(this.authFacade.refreshLoginApi(refreshTokenPostDto));
     }

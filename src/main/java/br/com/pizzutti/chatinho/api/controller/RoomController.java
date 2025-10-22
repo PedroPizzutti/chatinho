@@ -33,12 +33,7 @@ public class RoomController {
 
     @PostMapping
     @Operation(summary = "Cria uma sala")
-    @ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "201",
-                description = "CREATED",
-                content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "CREATED")})
     public ResponseEntity<RoomGetAggregateDto> create(@RequestBody @Valid RoomPostDto roomPostDto,
                                                       @AuthenticationPrincipal User user) {
         return ResponseEntity.status(201).body(this.roomFacade.create(roomPostDto, user.getId()));
@@ -46,9 +41,7 @@ public class RoomController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deleta uma sala")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "NO_CONTENT")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO_CONTENT")})
     public ResponseEntity<Void> delete(@PathVariable Long id,
                                        @AuthenticationPrincipal User user) {
         this.roomFacade.delete(id, user.getId());
@@ -57,9 +50,7 @@ public class RoomController {
 
     @PatchMapping("/{id}/leave")
     @Operation(summary = "Sai de uma sala")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "NO_CONTENT")
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO_CONTENT")})
     public ResponseEntity<Void> leave(@PathVariable Long id,
                                       @AuthenticationPrincipal User user) {
         this.roomFacade.leave(id, user.getId());
@@ -67,6 +58,8 @@ public class RoomController {
     }
 
     @PatchMapping("/{id}/kick/{idMember}")
+    @Operation(summary = "Expulsa um membro de uma sala")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "NO_CONTENT")})
     public ResponseEntity<Void> kick(@PathVariable Long id,
                                      @PathVariable Long idMember,
                                      @AuthenticationPrincipal User user) {
@@ -76,36 +69,21 @@ public class RoomController {
 
     @GetMapping
     @Operation(summary = "Lista as salas do usuário logado")
-    @ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "200",
-                description = "OK",
-                content = @Content(array = @ArraySchema(schema = @Schema(implementation = RoomGetAggregateDto.class)))),
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<List<RoomGetDto>> list(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(this.roomFacade.findAllByUser(user.getId()));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtém os dados detalhados de uma sala")
-    @ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "200",
-                description = "OK",
-                content = @Content(schema = @Schema(implementation = RoomGetAggregateDto.class)))
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<RoomGetAggregateDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(this.roomFacade.findById(id));
     }
 
     @GetMapping("/{id}/message")
     @Operation(summary = "Obtém as mensagens de uma sala (listadas e ordenadas pelas últimas)")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(schema = @Schema(implementation = MessageGetAggregatePageDto.class)))
-    })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "OK")})
     public ResponseEntity<MessageGetAggregatePageDto> listMessages(
             @RequestParam(required = false, defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "20") Integer perPage,
