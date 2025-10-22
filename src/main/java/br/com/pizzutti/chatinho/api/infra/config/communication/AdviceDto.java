@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-@Schema
 public record AdviceDto(
         LocalDateTime timestamp,
         Integer status,
