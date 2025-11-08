@@ -8,7 +8,7 @@ services:
     security_opt:
       - seccomp:unconfined
     environment:
-      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
       TZ: America/Sao_Paulo
     volumes:
       - mysql_data:/var/lib/mysql
@@ -21,11 +21,11 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - 5672:5672
+      - ${RABBIT_PORT}:5672
       - 15672:15672
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq/
     networks:
@@ -36,7 +36,7 @@ services:
     container_name: chatinho
     restart: always
     ports:
-      - "14500:14500"
+      - "${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       - mysql
       - rabbitmq
@@ -45,6 +45,8 @@ services:
     environment:
       - TZ=America/Sao_Paulo
       - JAVA_TOOL_OPTIONS=-Duser.timezone=America/Sao_Paulo
+    env_file:
+      - .env
     volumes:
       - /etc/localtime:/etc/localtime:ro
 
